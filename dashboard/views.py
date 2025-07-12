@@ -1,3 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
-# Create your views here.
+# In this setup, the main dashboard logic is handled by accounts.views.dashboard.
+# This file can be used for other dashboard-specific views if your dashboard app grows.
+# For now, you can have a simple redirect or a placeholder view if needed.
+
+# Example: If you want a specific "dashboard home" that redirects to accounts:dashboard
+@login_required
+def dashboard_home(request):
+    return redirect(reverse('accounts:dashboard'))
+
+# Or if you want this app to render its own dashboard content
+# @login_required
+# def dashboard_main(request):
+#     context = {
+#         'message': 'Welcome to your main dashboard!',
+#         # ... additional dashboard-specific data
+#     }
+#     return render(request, 'dashboard/dashboard.html', context)
