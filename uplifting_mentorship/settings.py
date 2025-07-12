@@ -25,14 +25,14 @@ INSTALLED_APPS = [
     'feedback',
     'dashboard', # Your dashboard app
     'api',
-    'corsheaders', # For CORS if you have a separate frontend
+    #'corsheaders', # For CORS if you have a separate frontend
     'rest_framework', # For API development
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # Must be before CommonMiddleware
+    #'corsheaders.middleware.CorsMiddleware', # Must be before CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

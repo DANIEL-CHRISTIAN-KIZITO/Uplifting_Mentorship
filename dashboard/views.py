@@ -6,10 +6,11 @@ from django.urls import reverse
 # This file can be used for other dashboard-specific views if your dashboard app grows.
 # For now, you can have a simple redirect or a placeholder view if needed.
 
-# Example: If you want a specific "dashboard home" that redirects to accounts:dashboard
+# This view will render the main dashboard page.
 @login_required
 def dashboard_home(request):
-    return redirect(reverse('accounts:dashboard'))
+    return render(request, 'dashboard_home.html')
+
 
 # Or if you want this app to render its own dashboard content
 # @login_required
