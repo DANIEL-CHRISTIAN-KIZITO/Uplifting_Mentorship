@@ -110,7 +110,7 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # Authentication URLs
 LOGIN_URL = 'accounts:login' # URL name for the login page
-LOGIN_REDIRECT_URL = 'accounts:dashboard' # URL name to redirect after successful login
+LOGIN_REDIRECT_URL = 'accounts:dashboard_home' # URL name to redirect after successful login
 LOGOUT_REDIRECT_URL = 'accounts:login' # URL name to redirect after logout
 
 # Messages Framework Tags (for styling messages in templates)

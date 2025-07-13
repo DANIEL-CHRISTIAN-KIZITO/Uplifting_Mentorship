@@ -56,10 +56,17 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     messages.info(request, "You have been logged out.")
-    return redirect(reverse('accounts:login')) # Redirect to login page after logout
+    return redirect(reverse('accounts:dashboard_home')) # Redirect to login page after logout
 
-# Dashboard View (requires login)
-@login_required
+#code to handle my home page in views.py
+def dashboard_home(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('accounts:dashboard'))  # Redirect to dashboard if logged in
+    else:
+        return render(request, 'dashboard_home.html')  # Render home page for unauthenticated users   
+    
+    
+@login_required   
 def dashboard(request):
     # Access user-specific data here
     user_role = request.user.role if hasattr(request.user, 'role') else 'N/A'
@@ -73,4 +80,4 @@ def dashboard(request):
         'profile_visibility': request.user.profile_visibility,
         # Add more data as needed for your dashboard
     }
-    return render(request, 'dashboard/dashboard.html', context) # Note: this renders a template in dashboard app
+    return render(request, 'dashboard/dashboard.html', context)

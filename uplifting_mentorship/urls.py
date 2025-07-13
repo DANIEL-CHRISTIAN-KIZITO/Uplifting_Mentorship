@@ -8,7 +8,7 @@ from django.contrib.auth import views as auth_views
 
 # Import Django's built-in authentication views
 from django.contrib.auth import views as auth_views
-from dashboard.views import dashboard_home
+from accounts.views import dashboard_home
 
 urlpatterns = [
     path('admin/', admin.site.urls),

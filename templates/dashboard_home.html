@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Uplifting Mentorship - Dashboard Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6fb;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #4a90e2;
+            color: #fff;
+            padding: 24px 0;
+            text-align: center;
+        }
+        nav {
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            padding: 12px 0;
+            text-align: center;
+        }
+        nav a {
+            color: #4a90e2;
+            text-decoration: none;
+            margin: 0 18px;
+            font-weight: 500;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 32px;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            margin-top: 32px;
+        }
+        .feature-card {
+            flex: 1 1 250px;
+            background: #f0f4fa;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .feature-card h3 {
+            margin-top: 0;
+            color: #4a90e2;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 16px;
+            }
+            .features {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Uplifting Mentorship</h1>
+        <p>Your journey to growth and connection starts here.</p>
+    </header>
+    <nav>
+        
+        <a href="{% url 'accounts:register' %}">Register</a>
+        <a href="{% url 'accounts:login' %}">Login</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+    <div class="container">
+        <h2>Dashboard Overview</h2>
+        <p>
+            Connect with mentors and mentees, track your progress, and make the most of your mentorship experience.
+        </p>
+        <div class="features">
+            <div class="feature-card">
+                <h3>Find a Mentor</h3>
+                <p>Browse our list of experienced mentors and request guidance in your areas of interest.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Connect with Mentees</h3>
+                <p>Share your knowledge and help others grow by becoming a mentor yourself.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Track Progress</h3>
+                <p>Monitor your mentorship sessions, set goals, and celebrate your achievements.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

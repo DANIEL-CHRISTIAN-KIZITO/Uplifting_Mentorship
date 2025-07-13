@@ -1,0 +1,77 @@
+/* Add this to your E:\CAMPUS WORK\RECESS YR 2\RECESS FINAL PROJECT\static\css\style.css */
+
+/* Ensure body takes full height for background to cover */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Styles for the login page wrapper */
+.login-page-wrapper {
+    position: relative; /* Needed for absolute positioning of overlay */
+    min-height: 100vh; /* Ensures it covers the full viewport height */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    background-image: url('https://placehold.co/1920x1080/E0F2F7/007bff?text=Mentorship+Background'); /* Blue-ish background image */
+    background-size: cover; /* Cover the entire area */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat;
+    overflow: hidden; /* Hide any overflow from image */
+}
+
+/* Overlay for blue and white effect */
+.login-background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom right, rgba(0, 123, 255, 0.7), rgba(255, 255, 255, 0.5)); /* Blue to white gradient */
+    z-index: 1; /* Place above background image but below content */
+}
+
+/* Wrapper for the actual login content */
+.login-content-wrapper {
+    position: relative;
+    z-index: 2; /* Place above the overlay */
+    width: 100%; /* Take full width to allow centering of container */
+    display: flex;
+    justify-content: center; /* Center the Bootstrap container */
+    align-items: center;
+    padding: 20px; /* Add some padding around the content */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Adjustments for the card and form within the new wrapper */
+.login-content-wrapper .card {
+    background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white card */
+    border: none; /* Remove default card border */
+}
+
+/* Ensure form elements take full width */
+.login-content-wrapper .form-control {
+    width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .login-content-wrapper {
+        padding: 10px; /* Less padding on smaller screens */
+    }
+    .login-content-wrapper .card {
+        padding: 20px; /* Adjust card padding */
+    }
+}
+
+/* General body styles (from previous instructions, ensure they are compatible or removed if duplicated) */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    /* Remove background-color, margin, padding here if they conflict with .login-page-wrapper */
+}
+
+/* Ensure your existing .container, .messages, etc., styles are still compatible. */
+/* The styles for .messages, .alert-info, .alert-success etc. in base.html are good. */
