@@ -5,41 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Uplifting Mentorship{% endblock %}</title>
     {% load static %}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
-        /* Basic styles for messages */
-        .messages {
-            list-style-type: none;
-            padding: 0;
-            margin: 10px 0;
-        }
-        .messages li {
-            padding: 10px;
-            margin-bottom: 5px;
-            border-radius: 4px;
-            text-align: center;
-        }
+        /* Basic styles for messages (keep these) */
+        .messages { list-style-type: none; padding: 0; margin: 10px 0; }
+        .messages li { padding: 10px; margin-bottom: 5px; border-radius: 4px; text-align: center; }
         .messages .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
         .messages .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .messages .alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
         .messages .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* Ensure body takes full height for background to cover (from login page design) */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        /* Basic layout for content below header/above footer */
+        body > main {
+            flex: 1; /* Allows main content to grow and push footer down */
+        }
     </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100"> {# Added flex classes for sticky footer #}
     <header>
-        <nav>
-            {# Example navigation links #}
-            {% if user.is_authenticated %}
-                <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
-                <a href="{% url 'accounts:logout' %}">Logout</a>
-            {% else %}
-                <a href="{% url 'accounts:login' %}">Login</a>
-                <a href="{% url 'accounts:register' %}">Register</a>
-            {% endif %}
-        </nav>
+        {% include 'partials/header.html' %} {# <--- THIS LINE IS CRUCIAL FOR INCLUDING THE HEADER #}
     </header>
 
-    <main>
+    <main class="container mt-4"> {# Added container and margin to main for better layout #}
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -52,8 +47,11 @@
         {% endblock %}
     </main>
 
-    <footer>
+    <footer class="mt-auto py-3 bg-light text-center"> {# Added mt-auto for sticky footer #}
         <p>&copy; 2025 Uplifting Mentorship</p>
     </footer>
+
+    <!-- Bootstrap JS (bundle includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
