@@ -8,6 +8,5 @@ urlpatterns = [
     # Add other dashboard-specific URLs here
     path('analytics/', analytics_dashboard, name='analytics_dashboard'),
     path('export/csv/', export_report_csv, name='export_csv'),
-    path('export/pdf/', export_report_pdf, name='export_pdf'),
-    
+    path('export/pdf/', export_report_pdf, name='export_pdf'), 
 ]

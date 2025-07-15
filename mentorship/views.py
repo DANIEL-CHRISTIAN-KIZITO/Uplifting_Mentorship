@@ -47,15 +47,27 @@ from accounts.models import User
 # FR6: Search mentors
 @login_required
 def search_mentors(request):
-    query = request.GET.get('q', '')
-    mentors = User.objects.filter(
-        role='mentor'
-    ).filter(
-        Q(expertise__icontains=query) |
-        Q(location__icontains=query) |
-        Q(interests__icontains=query)
-    )
-    return render(request, 'mentorship/search_results.html', {'mentors': mentors, 'query': query})
+    query = request.GET.get('q') # Get the search query from the URL parameter 'q'
+    expertise_filter = request.GET.get('expertise') # Get expertise filter
+
+    mentors = MentorProfile.objects.filter(available_for_mentorship=True)
+
+    if query:
+        # Search by username or expertise in the MentorProfile
+        mentors = mentors.filter(
+            Q(user__username__icontains=query) | # Search username on User model
+            Q(expertise__icontains=query) # Search expertise on MentorProfile model
+        ).distinct() # Use distinct to avoid duplicate mentors if they match multiple criteria
+
+    if expertise_filter:
+        mentors = mentors.filter(expertise__icontains=expertise_filter)
+
+    # You can also order them, e.g., by username
+    mentors = mentors.order_by('user__username') # Order by username on the related User model
+
+    return render(request, 'mentorship/search_mentors.html', {'mentors': mentors, 'query': query, 'expertise_filter': expertise_filter})
+
+
 
 # FR7: Send request
 @login_required

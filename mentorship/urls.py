@@ -14,4 +14,5 @@ urlpatterns = [
     path('request/<int:mentor_id>/', views.request_mentorship, name='request'),
     path('manage/', views.manage_requests, name='manage_requests'),
     path('update/<int:request_id>/<str:action>/', views.update_request_status, name='update_status'),
+    path('search/', views.search_mentors, name='search_mentors'),
 ]

@@ -2,57 +2,83 @@
 {% block title %}Admin Analytics Dashboard{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Admin Analytics Dashboard</h2>
 
-    <div class="row row-cols-1 row-cols-md-2 g-4">
+    <h3 class="text-center mb-4">Admin Analytics</h3>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
         <div class="col">
-            <div class="card shadow-sm p-3">
-                <h5>Total Users</h5>
-                <p>{{ total_users }}</p>
+            <div class="card text-white bg-primary h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text fs-4">{{ total_users }}</p>
+                </div>
             </div>
         </div>
+
         <div class="col">
-            <div class="card shadow-sm p-3">
-                <h5>Active Mentors</h5>
-                <p>{{ active_mentors }}</p>
+            <div class="card text-white bg-success h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Active Mentors</h5>
+                    <p class="card-text fs-4">{{ active_mentors }}</p>
+                </div>
             </div>
         </div>
+
         <div class="col">
-            <div class="card shadow-sm p-3">
-                <h5>Active Mentees</h5>
-                <p>{{ active_mentees }}</p>
+            <div class="card text-white bg-info h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Active Mentees</h5>
+                    <p class="card-text fs-4">{{ active_mentees }}</p>
+                </div>
             </div>
         </div>
+
         <div class="col">
-            <div class="card shadow-sm p-3">
-                <h5>Total Sessions</h5>
-                <p>{{ total_sessions }}</p>
+            <div class="card text-bg-warning h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Total Sessions</h5>
+                    <p class="card-text fs-4">{{ total_sessions }}</p>
+                </div>
             </div>
         </div>
+
         <div class="col">
-            <div class="card shadow-sm p-3">
-                <h5>Completed Sessions</h5>
-                <p>{{ completed_sessions }}</p>
+            <div class="card text-bg-secondary h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Completed Sessions</h5>
+                    <p class="card-text fs-4">{{ completed_sessions }}</p>
+                </div>
             </div>
         </div>
+
         <div class="col">
-            <div class="card shadow-sm p-3">
-                <h5>Average Feedback Rating</h5>
-                <p>{{ avg_rating }}</p>
+            <div class="card text-bg-dark text-white h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Avg Feedback Rating</h5>
+                    <p class="card-text fs-4">{{ average_rating }}</p>
+                </div>
             </div>
         </div>
+
         <div class="col">
-            <div class="card shadow-sm p-3">
-                <h5>Total Feedback Entries</h5>
-                <p>{{ total_feedback }}</p>
+            <div class="card text-bg-light h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Feedback Entries</h5>
+                    <p class="card-text fs-4">{{ total_feedback }}</p>
+                </div>
             </div>
         </div>
+
     </div>
 
     <div class="mt-4 text-center">
         <a href="{% url 'dashboard:export_csv' %}" class="btn btn-outline-primary me-2">Download CSV</a>
         <a href="{% url 'dashboard:export_pdf' %}" class="btn btn-outline-danger">Download PDF</a>
     </div>
+
+</div>
+
+    
 </div>
 {% endblock %}
