@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}My Bookings{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">My Scheduled Sessions</h2>
+
+    {% if bookings %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Mentor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Topic</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.mentor.username }}</td>
+                        <td>{{ booking.date }}</td>
+                        <td>{{ booking.time }}</td>
+                        <td>{{ booking.topic }}</td>
+                        <td>
+                            {% if booking.date >= today %}
+                                <span class="badge bg-success">Upcoming</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Past</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info text-center">You have not booked any sessions yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

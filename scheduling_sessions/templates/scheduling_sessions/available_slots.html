@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Available Slots{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Available Slots for {{ mentor.username }}</h2>
+
+    {% if slots %}
+        <table class="table table-bordered mt-4">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Duration</th>
+                    <th>Topic</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot in slots %}
+                    <tr>
+                        <td>{{ slot.date }}</td>
+                        <td>{{ slot.time }}</td>
+                        <td>{{ slot.duration }} mins</td>
+                        <td>{{ slot.topic }}</td>
+                        <td>
+                            <a href="{% url 'sessions:book_slot' slot.id %}" class="btn btn-success btn-sm">Book</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info text-center mt-4">No available slots at the moment.</div>
+    {% endif %}
+</div>
+{% endblock %}

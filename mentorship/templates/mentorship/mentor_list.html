@@ -1,0 +1,48 @@
+ {% extends "base.html" %}
+{% load static %}
+{% block title %}Available Mentors{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Available Mentors</h2>
+
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search by expertise, location, or interests">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    {% if mentors %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for mentor in mentors %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if mentor.photo %}
+                            <img src="{{ mentor.photo.url }}" class="card-img-top" alt="{{ mentor.username }}">
+                        {% else %}
+                            <img src="{% static 'images/default-user.png' %}" class="card-img-top" alt="No Image">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ mentor.username }}</h5>
+                            <p class="card-text">
+                                <strong>Expertise:</strong> {{ mentor.expertise }}<br>
+                                <strong>Location:</strong> {{ mentor.location }}<br>
+                                <strong>Interests:</strong> {{ mentor.interests }}
+                            </p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="{% url 'mentorship:request' mentor.id %}" class="btn btn-success">Request Mentorship</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center">
+            No mentors found for your search.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

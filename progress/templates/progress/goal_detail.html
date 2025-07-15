@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Goal: {{ goal.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-3">Goal Details</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title">{{ goal.title }}</h4>
+            <p class="card-text">{{ goal.description }}</p>
+
+            <ul class="list-group list-group-flush my-3">
+                <li class="list-group-item"><strong>Status:</strong> {{ goal.status }}</li>
+                <li class="list-group-item"><strong>Progress:</strong> {{ goal.progress }}%</li>
+                <li class="list-group-item"><strong>Due Date:</strong> {{ goal.due_date }}</li>
+            </ul>
+
+            {% if goal.notes %}
+                <div class="alert alert-secondary">
+                    <strong>Notes:</strong><br>
+                    {{ goal.notes }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="{% url 'progress:my_goals' %}" class="btn btn-outline-primary mt-4">← Back to My Goals</a>
+</div>
+{% endblock %}

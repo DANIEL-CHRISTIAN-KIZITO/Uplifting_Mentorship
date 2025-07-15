@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Book Slot{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Book Mentorship Session</h2>
+
+    <div class="card shadow-sm mt-4 p-4">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Date</label>
+                <input type="text" class="form-control" value="{{ slot.date }}" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Time</label>
+                <input type="text" class="form-control" value="{{ slot.time }}" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Topic</label>
+                <input type="text" class="form-control" value="{{ slot.topic }}" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Add Notes (Optional)</label>
+                <textarea name="notes" class="form-control" rows="3" placeholder="Type any expectations, questions..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Confirm Booking</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

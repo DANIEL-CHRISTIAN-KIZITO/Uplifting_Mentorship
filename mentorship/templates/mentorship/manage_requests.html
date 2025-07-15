@@ -1,0 +1,12 @@
+<h2>Mentorship Requests</h2>
+<ul>
+{% for req in requests %}
+    <li>
+        From: {{ req.mentee.username }} | Status: {{ req.status }}
+        {% if req.status == 'pending' %}
+            <a href="{% url 'mentorship:update_status' req.id 'accept' %}">Accept</a> |
+            <a href="{% url 'mentorship:update_status' req.id 'reject' %}">Reject</a>
+        {% endif %}
+    </li>
+{% endfor %}
+</ul>

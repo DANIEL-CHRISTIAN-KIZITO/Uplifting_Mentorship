@@ -52,6 +52,7 @@ path('', dashboard_home, name='dashboard_home'),  # Redirect to the dashboard ho
     path('dashboard/', include('dashboard.urls')), # Dashboard app URLs
     path('api/', include('api.urls')),
     path('api-auth/', include('rest_framework.urls')), # For Django Rest Framework browsable API
+    
 ]
 
 # Serve static and media files in development

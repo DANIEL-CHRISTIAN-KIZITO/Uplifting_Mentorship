@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Submit Feedback{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Submit Feedback</h2>
+
+    <div class="card shadow-sm p-4">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="mentor" class="form-label">Select Mentor</label>
+                <select name="mentor" class="form-select" required>
+                    <option value="">-- Choose Mentor --</option>
+                    {% for mentor in mentors %}
+                        <option value="{{ mentor.id }}">{{ mentor.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="session" class="form-label">Select Session</label>
+                <select name="session" class="form-select" required>
+                    <option value="">-- Choose Session --</option>
+                    {% for session in sessions %}
+                        <option value="{{ session.id }}">{{ session.date }} - {{ session.topic }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Rating (1–5)</label>
+                <input type="number" name="rating" min="1" max="5" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Comments</label>
+                <textarea name="comments" rows="4" class="form-control" placeholder="Your feedback..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Submit Feedback</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

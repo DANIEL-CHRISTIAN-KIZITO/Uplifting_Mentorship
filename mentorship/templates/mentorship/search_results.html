@@ -1,0 +1,66 @@
+<h2>Search Results</h2>
+<form method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search mentors...">
+    <button type="submit">Search</button>
+</form>
+<ul>
+{% for mentor in mentors %}
+    <li>{{ mentor.username }} - {{ mentor.expertise }}
+        <a href="{% url 'mentorship:request' mentor.id %}">Request Mentorship</a>
+    </li>
+{% empty %}
+    <li>No mentors found.</li>
+{% endfor %}
+</ul>
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Search Results</h1>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="{% url 'mentorship:mentee_dashboard' %}" class="list-group-item list-group-item-action">Dashboard</a>          
+                <a href="{% url 'mentorship:search' %}" class="list-group-item list-group-item-action active">Search Mentors</a>
+                <a href="{% url 'mentorship:manage_requests' %}" class="list-group-item list-group-item-action">Manage Requests</a>
+                <a href="{% url 'mentorship:mentor_list' %}" class="list-group-item list-group-item-action">View Mentors</a>
+                <a href="{% url 'scheduling_sessions:available_slots' %}" class="list-group-item list-group-item-action">Schedule Sessions</a>
+                <a href="{% url 'chat:chat_room_list' %}" class="list-group-item list-group-item-action">Chat</a>
+                <a href="{% url 'progress:my_goals' %}" class="list-group-item list-group-item-action">Track Progress</a>
+                <a href="{% url 'feedback:submit_feedback' %}" class="list-group-item list-group-item-action">Submit Feedback</a>
+            </div>  
+        </div>
+        <div class="col-md-9">
+            <h2>Search Results</h2>
+            <form method="get">
+                <div class="mb-3">
+                    <input type="text" name="q" class="form-control" value="{{ query }}" placeholder="Search mentors...">
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+            <ul class="list-group mt-3">
+            {% if mentors %}
+                {% for mentor in mentors %}
+                    <li class="list-group-item">
+                        <strong>{{ mentor.username }}</strong> - {{ mentor.expertise }}
+                        <a href="{% url 'mentorship:request' mentor.id %}" class="btn btn-primary btn-sm float-end">Request Mentorship</a>  
+                    </li>
+                {% endfor %}    
+            {% else %}
+                <li class="list-group-item">No mentors found.</li>
+            {% endif %} 
+            </ul>
+        </div>  
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Any additional JavaScript can go here
+</script>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/mentorship.css' %}">
+{% endblock %}

@@ -1,0 +1,84 @@
+#html code to display nice looking mentee dashboard
+{% extends "base.html" %}
+
+{% block content %} 
+<div class="container mt-5">
+    <h1 class="mb-4">Mentee Dashboard</h1>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="{% url 'mentorship:mentee_dashboard' %}" class="list-group-item list-group-item-action active">Dashboard</a>
+                <a href="{% url 'mentorship:search' %}" class="list-group-item list-group-item-action">Search Mentors</a>
+                <a href="{% url 'mentorship:manage_requests' %}" class="list-group-item list-group-item-action">Manage Requests</a>
+                <a href="{% url 'mentorship:mentor_list' %}" class="list-group-item list-group-item-action">View Mentors</a>
+                <a href="{% url 'scheduling_sessions:available_slots' %}" class="list-group-item list-group-item-action">Schedule Sessions</a>      
+                <a href="{% url 'chat:chat_room_list' %}" class="list-group-item list-group-item-action">Chat</a>
+                <a href="{% url 'progress:my_goals' %}" class="list-group-item list-group-item-action">Track Progress</a>
+                <a href="{% url 'feedback:submit_feedback' %}" class="list-group-item list-group-item-action">Submit Feedback</a>
+            </div>  
+        </div>  
+        <div class="col-md-9">
+            <h2>Welcome, {{ user.username }}!</h2>
+            <p>Here you can manage your mentorship requests, search for mentors, and track your progress.</p>
+            
+            <div class="card mb-4">
+                <div class="card-header">Your Mentorship Requests</div>
+                <div class="card-body">
+                    {% if requests %}
+                        <ul class="list-group">
+                        {% for req in requests %}
+                            <li class="list-group-item">
+                                From: {{ req.mentor.username }} | Status: {{ req.status }}
+                                {% if req.status == 'pending' %}
+                                    <a href="{% url 'mentorship:update_status' req.id 'accept' %}" class="btn btn-success btn-sm">Accept</a>
+                                    <a href="{% url 'mentorship:update_status' req.id 'reject' %}" class="btn btn-danger btn-sm">Reject</a>
+                                {% endif %}     
+                            </li>
+                        {% endfor %}    
+                        </ul>
+                    {% else %}
+                        <p>No mentorship requests found.</p>
+                    {% endif %} 
+                </div>
+            </div>  
+            <div class="card">
+                <div class="card-header">Search Mentors</div>
+                <div class="card-body">
+                    <form method="get" action="{% url 'mentorship:search' %}">
+                        <div class="mb-3">
+                            <input type="text" name="q" class="form-control" value="{{ query }}" placeholder="Search mentors...">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                    {% if mentors %}
+                        <ul class="list-group mt-3">
+                        {% for mentor in mentors %}
+                            <li class="list-group-item">
+                                {{ mentor.username }} - {{ mentor.expertise }}
+                                <a href="{% url 'mentorship:request' mentor.id %}" class="btn btn-primary btn-sm float-end">Request Mentorship</a>  
+                            </li>
+                        {% endfor %}    
+                        </ul>
+                    {% else %}
+                        <p class="mt-3">No mentors found.</p>
+                    {% endif %} 
+                </div>
+            </div>  
+        </div>
+    </div>  
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    // Any additional JavaScript can go here
+</script>
+{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/mentorship.css' %}">
+{% endblock %}
+<script src="{% static 'js/mentorship.js' %}"></script>
+{% endblock %}
+{% endblock %} 
+

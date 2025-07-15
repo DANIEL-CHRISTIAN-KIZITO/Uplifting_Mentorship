@@ -22,3 +22,24 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"Booking of {self.session_slot} by {self.mentee.username}"
+
+
+class Session(models.Model):
+    STATUS_CHOICES = [
+        ('scheduled', 'Scheduled'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    mentor = models.ForeignKey(User, related_name='mentor_sessions', on_delete=models.CASCADE)
+    mentee = models.ForeignKey(User, related_name='mentee_sessions', on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    topic = models.CharField(max_length=255)
+    duration = models.PositiveIntegerField(help_text="Duration in minutes")
+    notes = models.TextField(blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='scheduled')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.topic} ({self.date} {self.time})"

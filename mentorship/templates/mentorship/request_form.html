@@ -1,0 +1,18 @@
+<h2>Send Request to {{ mentor.username }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <textarea name="message" rows="5" placeholder="Your message..."></textarea><br>
+    <button type="submit">Send Request</button>
+</form>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    // Any additional JavaScript can go here
+</script>
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/mentorship.css' %}">
+{% endblock %}

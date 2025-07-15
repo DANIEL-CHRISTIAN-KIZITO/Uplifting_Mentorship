@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}My Feedback{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">My Feedback History</h2>
+
+    {% if feedback_list %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Session</th>
+                        <th>To</th>
+                        <th>Rating</th>
+                        <th>Comments</th>
+                        <th>Submitted On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fb in feedback_list %}
+                        <tr>
+                            <td>{{ fb.session.topic }} ({{ fb.session.date }})</td>
+                            <td>{{ fb.to_user.username }}</td>
+                            <td>{{ fb.rating }}</td>
+                            <td>{{ fb.comments }}</td>
+                            <td>{{ fb.created_at|date:"M d, Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">No feedback submitted or received yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

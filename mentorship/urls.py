@@ -10,4 +10,8 @@ urlpatterns = [
     path('mentors/<int:mentor_pk>/request/', views.request_mentorship, name='request_mentorship'),
     path('mentee/dashboard/', views.mentee_dashboard, name='mentee_dashboard'),
     # Add more URLs as needed
+    path('search/', views.search_mentors, name='search'),
+    path('request/<int:mentor_id>/', views.request_mentorship, name='request'),
+    path('manage/', views.manage_requests, name='manage_requests'),
+    path('update/<int:request_id>/<str:action>/', views.update_request_status, name='update_status'),
 ]

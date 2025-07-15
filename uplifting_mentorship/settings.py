@@ -124,6 +124,7 @@ MESSAGE_TAGS = {
 
 # Email Backend for Password Reset (for development, prints to console)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'admin@uplifting.com'
 # For production, you'd use a real SMTP backend:
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_HOST = 'smtp.yourprovider.com'

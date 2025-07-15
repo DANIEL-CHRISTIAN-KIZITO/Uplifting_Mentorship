@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Admin Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Admin Analytics Dashboard</h2>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <h5>Total Users</h5>
+                <p>{{ total_users }}</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <h5>Active Mentors</h5>
+                <p>{{ active_mentors }}</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <h5>Active Mentees</h5>
+                <p>{{ active_mentees }}</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <h5>Total Sessions</h5>
+                <p>{{ total_sessions }}</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <h5>Completed Sessions</h5>
+                <p>{{ completed_sessions }}</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <h5>Average Feedback Rating</h5>
+                <p>{{ avg_rating }}</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card shadow-sm p-3">
+                <h5>Total Feedback Entries</h5>
+                <p>{{ total_feedback }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'dashboard:export_csv' %}" class="btn btn-outline-primary me-2">Download CSV</a>
+        <a href="{% url 'dashboard:export_pdf' %}" class="btn btn-outline-danger">Download PDF</a>
+    </div>
+</div>
+{% endblock %}
