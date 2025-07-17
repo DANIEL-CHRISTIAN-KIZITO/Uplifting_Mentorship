@@ -1,7 +1,7 @@
 # scheduling_sessions/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from .models import SessionSlot, Booking
 # from .forms import SessionSlotForm, BookingForm # You'll create these
@@ -29,3 +29,6 @@ def my_bookings(request):
     return render(request, 'scheduling_sessions/my_bookings.html', {'bookings': bookings})
 
 # Add views for mentor's slots, cancelling bookings, etc.
+from scheduling_sessions.models import Session
+
+

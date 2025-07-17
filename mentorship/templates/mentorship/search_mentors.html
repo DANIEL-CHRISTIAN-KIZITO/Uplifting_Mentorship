@@ -1,33 +1,44 @@
-{# mentorship/templates/mentorship/search_mentors.html #}
 {% extends 'base.html' %}
 
-{% block title %}Search Mentors{% endblock %}
+{% block title %}Find a Mentor{% endblock %}
 
 {% block content %}
-    <h1>Search Mentors</h1>
+<div class="container mt-4">
 
-    <form method="GET" action="{% url 'mentorship:search_mentors' %}" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="q" class="form-control" placeholder="Search by username or expertise" value="{{ query|default:'' }}">
-            <input type="text" name="expertise" class="form-control ms-2" placeholder="Filter by expertise" value="{{ expertise_filter|default:'' }}">
-            <button class="btn btn-primary ms-2" type="submit">Search</button>
+    <div class="mb-3">
+        <a href="{% url 'mentorship:mentor_list' %}" class="btn btn-outline-secondary">
+            View All Mentors Instead
+        </a>
+    </div>
+    <h2>Find a Mentor</h2>
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="expertise" class="form-control" placeholder="Search by Expertise">
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="location" class="form-control" placeholder="Search by Location">
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="interests" class="form-control" placeholder="Search by Interests">
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Search</button>
         </div>
     </form>
 
     {% if mentors %}
-        <h2>Results:</h2>
-        <ul>
+        <h4>Results:</h4>
+        <ul class="list-group">
             {% for mentor in mentors %}
-                <li>
-                    <a href="{% url 'mentorship:mentor_detail' mentor.pk %}">{{ mentor.user.username }}</a>
-                    - Expertise: {{ mentor.expertise }}
-                    {% if mentor.user.photo %}
-                        <img src="{{ mentor.user.photo.url }}" alt="{{ mentor.user.username }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                    {% endif %}
+                <li class="list-group-item">
+                    <strong>{{ mentor.user.username }}</strong> — 
+                    {{ mentor.expertise }}, {{ mentor.location }}
+                    <br><small>{{ mentor.interests }}</small>
                 </li>
+            {% empty %}
+                <li class="list-group-item">No mentors found.</li>
             {% endfor %}
         </ul>
-    {% else %}
-        <p>No mentors found matching your criteria.</p>
     {% endif %}
+</div>
 {% endblock %}

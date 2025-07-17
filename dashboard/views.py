@@ -160,3 +160,56 @@ def dashboard(request):
     }
 
     return render(request, 'dashboard/dashboard.html', context)
+
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render
+from accounts.models import User
+from scheduling_sessions.models import Session
+from feedback.models import Feedback
+
+@user_passes_test(lambda u: u.is_superuser)
+def custom_admin_dashboard(request):
+    context = {
+        'total_users': User.objects.count(),
+        'total_sessions': Session.objects.count(),
+        'total_feedback': Feedback.objects.count(),
+    }
+    return render(request, 'dashboard/custom_admin_dashboard.html', context)
+
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth import get_user_model
+from django.shortcuts import render, redirect
+User = get_user_model()
+
+@user_passes_test(lambda u: u.is_superuser)
+def manage_users(request):
+    users = User.objects.all()
+    return render(request, 'dashboard/manage_users.html', {'users': users})
+
+@user_passes_test(lambda u: u.is_superuser)
+def manage_sessions(request):
+    sessions = Session.objects.all()
+    return render(request, 'dashboard/manage_sessions.html', {'sessions': sessions})
+
+from .models import Resource
+
+@user_passes_test(lambda u: u.is_superuser)
+def manage_resources(request):
+    resources = Resource.objects.all()
+    return render(request, 'dashboard/manage_resources.html', {'resources': resources})
+
+from accounts.decorators import admin_required
+
+@admin_required
+def custom_admin_dashboard(request):
+    return render(request, 'dashboard/admin_panel.html')
+
+from django.shortcuts import render
+from django.http import HttpResponseForbidden
+
+def custom_admin_dashboard(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden(render(request, '403.html'))
+
+    return render(request, 'dashboard/custom_admin_dashboard.html')
+

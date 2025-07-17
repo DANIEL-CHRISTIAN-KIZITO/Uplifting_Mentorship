@@ -1,0 +1,19 @@
+{# mentorship/templates/mentorship/assign_success.html #}
+{% extends 'base.html' %}
+
+{% block title %}Assignment Successful{% endblock %}
+
+{% block content %}
+    <div class="container mt-4 text-center">
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading">Mentor Assignment Successful!</h4>
+            <p>The mentor has been successfully assigned to the mentee.</p>
+            <hr>
+            <p class="mb-0">You can now view the updated assignments or go back to the dashboard.</p>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'mentorship:assign_mentor' %}" class="btn btn-primary me-2">Assign Another Mentor</a>
+            <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">Go to Dashboard</a>
+        </div>
+    </div>
+{% endblock %}

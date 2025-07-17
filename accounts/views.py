@@ -81,3 +81,41 @@ def dashboard(request):
         # Add more data as needed for your dashboard
     }
     return render(request, 'dashboard/dashboard.html', context)
+
+# accounts/views.py
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import ProfileUpdateForm
+
+@login_required
+def profile_detail(request):
+    return render(request, 'accounts/profile_detail.html', {'user': request.user})
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:dashboard')  # Or wherever you want to go after saving
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+    return render(request, 'accounts/update_profile.html', {'form': form})
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+@receiver(post_save, sender=User)
+def set_role_for_superuser(sender, instance, created, **kwargs):
+    if created and instance.is_superuser:
+        instance.role = 'admin'
+        instance.save()
+
+
+
+
+
+

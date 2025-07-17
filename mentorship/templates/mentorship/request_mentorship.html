@@ -1,61 +1,38 @@
-#code to display request mentorship page
-{% extends "base.html" %}
+{# mentorship/templates/mentorship/request_mentorship.html #}
+{% extends 'base.html' %}
+
+{% block title %}Request Mentorship from {{ mentor.user.username }}{% endblock %} {# Corrected here #}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4">Request Mentorship</h1>
-    
-    <div class="row">
-        <div class="col-md-3">
-            <div class="list-group">
-                <a href="{% url 'mentorship:mentee_dashboard' %}" class="list-group-item list-group-item-action">Dashboard</a>
-                <a href="{% url 'mentorship:search' %}" class="list-group-item list-group-item-action">Search Mentors</a>
-                <a href="{% url 'mentorship:manage_requests' %}" class="list-group-item list-group-item-action">Manage Requests</a>
-                <a href="{% url 'mentorship:mentor_list' %}" class="list-group-item list-group-item-action">View Mentors</a>
-                <a href="{% url 'scheduling_sessions:available_slots' %}" class="list-group-item list-group-item-action">Schedule Sessions</a>
-                <a href="{% url 'chat:chat_room_list' %}" class="list-group-item list-group-item-action">Chat</a>
-                <a href="{% url 'progress:my_goals' %}" class="list-group-item list-group-item-action">Track Progress</a>
-                <a href="{% url 'feedback:submit_feedback' %}" class="list-group-item list-group-item-action">Submit Feedback</a>
-            </div>  
-        </div>
-        <div class="col-md-9">
-            <div class="card mb-4">
-                <div class="card-header">Mentor Information</div>
-                <div class="card-body">
-                    <p><strong>Username:</strong> {{ mentor.username }}</p>
-                    <p><strong>Expertise:</strong> {{ mentor.expertise }}</p>
-                    <p><strong>Bio:</strong> {{ mentor.bio }}</p>
-                    <p><strong>Location:</strong> {{ mentor.location }}</p>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg p-4 rounded-3">
+                    <h2 class="text-center mb-4">Request Mentorship from {{ mentor.user.username }}</h2> {# Corrected here #}
+                    <p class="text-center text-muted">Expertise: {{ mentor.expertise }}</p>
+
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li class="{{ message.tags }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Your Message:</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" placeholder="Tell {{ mentor.user.username }} why you'd like their mentorship..."></textarea> {# Corrected here #}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 rounded-2 py-2">Send Request</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'mentorship:mentor_detail' mentor.pk %}" class="text-decoration-none">Cancel and go back</a>
+                    </div>
                 </div>
             </div>
-            
-            <h2>Request Mentorship</h2>
-            <form method="post" action="{% url 'mentorship:request' mentor.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">Request Mentorship</button>
-            </form> 
-            <h2 class="mt-4">Mentorship Requests</h2>
-            <ul>
-            {% for req in requests %}
-                <li>
-                    From: {{ req.mentee.username }} | Status: {{ req.status }}
-                    {% if req.status == 'pending' %}
-                        <a href="{% url 'mentorship:update_status' req.id 'accept' %}">Accept</a> |
-                        <a href="{% url 'mentorship:update_status' req.id 'reject' %}">Reject</a>
-                    {% endif %}
-                </li>
-            {% endfor %}    
-            </ul>
         </div>
     </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    // Any additional JavaScript can go here
-</script>
-{% endblock %}
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/mentorship.css' %}">
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Resource Library</h3>
+<ul class="list-group">
+    {% for res in resources %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ res.title }}
+        <a href="{{ res.file.url }}" class="btn btn-sm btn-outline-primary" download>Download</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -32,3 +32,13 @@ class UserLoginForm(AuthenticationForm):
     )
     # No need for a custom clean method unless you have specific cross-field validation
     # that AuthenticationForm doesn't cover.
+# accounts/forms.py
+from django import forms
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'bio', 'expertise', 'interests', 'contact_info', 'profile_photo']

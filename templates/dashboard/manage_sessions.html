@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3 class="mb-4">Session Management</h3>
+<table class="table table-bordered">
+  <thead>
+    <tr><th>Mentor</th><th>Mentee</th><th>Date</th><th>Topic</th></tr>
+  </thead>
+  <tbody>
+    {% for session in sessions %}
+    <tr>
+      <td>{{ session.mentor }}</td>
+      <td>{{ session.mentee }}</td>
+      <td>{{ session.date }}</td>
+      <td>{{ session.topic }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

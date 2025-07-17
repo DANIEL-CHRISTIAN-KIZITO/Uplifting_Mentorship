@@ -100,5 +100,25 @@
             </div>
         </div>
     </div>
+
+    {% if footers %}
+  <div class="footers">
+    {% for footer in footers %}
+      <p>{{ footer.text }}</p>
+      <a href="{{ footer.link.url }}">{{ footer.link.text }}</a>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="footers">
+    <p>&copy; {{ current_year }} Uplifting Mentorship. All rights reserved.</p>
+    <a href="/privacy-policy">Privacy Policy</a>
+  </div>
+{% endif %}
+
+{% block scripts %}
+    <script src="/static/js/main.js"></script>
+{% endblock %}
 </body>
+
+      
 </html>

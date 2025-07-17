@@ -9,6 +9,7 @@ from django.contrib.auth import views as auth_views
 # Import Django's built-in authentication views
 from django.contrib.auth import views as auth_views
 from accounts.views import dashboard_home
+from django.views.defaults import permission_denied
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -52,7 +53,7 @@ path('', dashboard_home, name='dashboard_home'),  # Redirect to the dashboard ho
     path('dashboard/', include('dashboard.urls')), # Dashboard app URLs
     path('api/', include('api.urls')),
     path('api-auth/', include('rest_framework.urls')), # For Django Rest Framework browsable API
-    
+    path('403/', permission_denied, {'exception': Exception('Permission Denied')}, name='403'),
 ]
 
 # Serve static and media files in development

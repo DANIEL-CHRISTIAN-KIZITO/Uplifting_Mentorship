@@ -1,45 +1,105 @@
-    {# templates/partials/header.html #}
-    {% load static %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'accounts:dashboard' %}">Uplifting Mentorship</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto"> {# ms-auto pushes items to the right #}
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mentorship:mentor_list' %}">Mentors</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'scheduling_sessions:available_slots' %}">Schedule</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'chat:chat_room_list' %}">Chat</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'progress:my_goals' %}">Progress</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'feedback:submit_feedback' %}">Feedback</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:logout' %}">Logout ({{ user.username }})</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand" href="{% url 'accounts:dashboard' %}">Uplifting Mentorship</a>
+
+
+        <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mentorship:mentor_list' %}">Mentors</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'scheduling_sessions:available_slots' %}">Schedule</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'chat:chat_room_list' %}">Chat</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'progress:my_goals' %}">Progress</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'feedback:submit_feedback' %}">Feedback</a>
+                    </li>
+                    <li class="nav-item">
+                        {% if user.is_authenticated %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-person-circle me-1"></i> {{ user.username }}
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+        <li><a class="dropdown-item" href="{% url 'accounts:profile_detail' %}"><i class="bi bi-person me-2"></i> View Profile</a></li>
+        <li><a class="dropdown-item" href="{% url 'accounts:update_profile' %}"><i class="bi bi-pencil-square me-2"></i> Edit Profile</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+    </ul>
+</li>
+{% else %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
+</li>
+{% endif %}
+
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
         </div>
-    </nav>
-    
+    </div>
+</nav>
+
+<!-- Offcanvas Sidebar for mobile view -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarLabel">
+    <div class="offcanvas-header bg-primary text-white">
+        <h5 class="offcanvas-title" id="sidebarLabel">Menu</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'mentorship:mentor_list' %}">Mentors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'scheduling_sessions:available_slots' %}">Schedule</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'chat:chat_room_list' %}">Chat</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'progress:my_goals' %}">Progress</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'feedback:submit_feedback' %}">Feedback</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:logout' %}">Logout ({{ user.username }})</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

@@ -1,62 +1,53 @@
-#code to display mentor detail page
-{% extends "base.html" %}
+{# mentorship/templates/mentorship/mentor_detail.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mentor: {{ mentor.user.username }}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1 class="mb-4">Mentor Detail: {{ mentor.username }}</h1>
-    
-    <div class="row">
-        <div class="col-md-3">
-            <div class="list-group">
-                <a href="{% url 'mentorship:mentee_dashboard' %}" class="list-group-item list-group-item-action">Dashboard</a>
-                <a href="{% url 'mentorship:search' %}" class="list-group-item list-group-item-action">Search Mentors</a>
-                <a href="{% url 'mentorship:manage_requests' %}" class="list-group-item list-group-item-action">Manage Requests</a>
-                <a href="{% url 'mentorship:mentor_list' %}" class="list-group-item list-group-item-action">View Mentors</a>
-                <a href="{% url 'scheduling_sessions:available_slots' %}" class="list-group-item list-group-item-action">Schedule Sessions</a>
-                <a href="{% url 'chat:chat_room_list' %}" class="list-group-item list-group-item-action">Chat</a>
-                <a href="{% url 'progress:my_goals' %}" class="list-group-item list-group-item-action">Track Progress</a>
-                <a href="{% url 'feedback:submit_feedback' %}" class="list-group-item list-group-item-action">Submit Feedback</a>
-            </div>  
-        </div>
-        <div class="col-md-9">
-            <div class="card mb-4">
-                <div class="card-header">Mentor Information</div>
-                <div class="card-body">
-                    <p><strong>Username:</strong> {{ mentor.username }}</p>
-                    <p><strong>Expertise:</strong> {{ mentor.expertise }}</p>
-                    <p><strong>Bio:</strong> {{ mentor.bio }}</p>
-                    <p><strong>Location:</strong> {{ mentor.location }}</p>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg p-4 rounded-3">
+                    <div class="text-center mb-4">
+                        {% if mentor.user.photo %}
+                            <img src="{{ mentor.user.photo.url }}" alt="{{ mentor.user.username }}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #007bff;">
+                        {% else %}
+                            {# Placeholder image if no photo #}
+                            <img src="{% static 'images/default_profile.png' %}" alt="Default Profile" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #007bff;">
+                        {% endif %}
+                        <h1 class="card-title text-primary">{{ mentor.user.username }}</h1>
+                        <p class="card-subtitle text-muted">{{ mentor.expertise }}</p>
+                    </div>
+
+                    <div class="card-body">
+                        <h4 class="mb-3">About Me:</h4>
+                        <p class="card-text">{{ mentor.bio|default:"No bio provided yet." }}</p>
+
+                        <hr>
+
+                        <h4 class="mb-3">Contact & Availability:</h4>
+                        <p><strong>Email:</strong> {{ mentor.user.email }}</p>
+                        <p><strong>Available for Mentorship:</strong>
+                            {% if mentor.available_for_mentorship %}
+                                <span class="badge bg-success">Yes</span>
+                            {% else %}
+                                <span class="badge bg-danger">No</span>
+                            {% endif %}
+                        </p>
+
+                        <div class="mt-4 text-center">
+                            {% if mentor.available_for_mentorship %}
+                                {# THIS IS THE CRUCIAL LINE - ENSURE IT'S 'mentorship:request_mentorship' #}
+                                <a href="{% url 'mentorship:request_mentorship' mentor_pk=mentor.pk %}" class="btn btn-success btn-lg me-3">Request Mentorship</a>
+                            {% else %}
+                                <button class="btn btn-secondary btn-lg me-3" disabled>Not Available</button>
+                            {% endif %}
+                            <a href="{% url 'mentorship:mentor_list' %}" class="btn btn-outline-secondary btn-lg">Back to Mentors</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <h2>Request Mentorship</h2>
-            <form method="post" action="{% url 'mentorship:request' mentor.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">Request Mentorship</button>
-            </form> 
-            <h2 class="mt-4">Mentorship Requests</h2>
-            <ul>
-            {% for req in requests %}
-                <li>
-                    From: {{ req.mentee.username }} | Status: {{ req.status }}
-                    {% if req.status == 'pending' %}
-                        <a href="{% url 'mentorship:update_status' req.id 'accept' %}">Accept</a> |
-                        <a href="{% url 'mentorship:update_status' req.id 'reject' %}">Reject</a>
-                    {% endif %}
-                </li>
-            {% endfor %}    
-            </ul>
-        </div>  
+        </div>
     </div>
-</div>
-{% endblock %}
-
-{% block scripts %} 
-<script>
-    // Any additional JavaScript can go here
-</script>
-{% endblock %}
-
-{% block styles %}
-<link rel="stylesheet" href="{% static 'css/mentorship.css' %}">
 {% endblock %}
