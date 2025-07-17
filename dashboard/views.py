@@ -1,25 +1,22 @@
+# dashboard/views.py
+from pyexpat.errors import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from django.db import models
+from django.db import models # Needed for models.Avg
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 import csv
 from io import BytesIO
-from reportlab.pdfgen import canvas
-from accounts.models import User
-from scheduling_sessions.models import Session
-from feedback.models import Feedback
-from django.db.models import Avg
-from scheduling_sessions.models import SessionSlot, Booking
-from mentorship.models import MentorshipRequest
-from progress.models import Goal
-from feedback.models import Rating
-from mentorship.models import MentorProfile  # Add this import (adjust app name if needed)
+from reportlab.pdfgen import canvas # Requires 'reportlab' package
 
-# Remove this comment; dashboard logic is now handled in this file.
-# This file can be used for other dashboard-specific views if your dashboard app grows.
-# For now, you can have a simple redirect or a placeholder view if needed.
+# Corrected Imports:
+from accounts.models import User
+from mentorship.models import MentorshipSession, MentorProfile, MenteeProfile, MentorshipRequest # MentorshipSession is here
+from scheduling_sessions.models import SessionSlot, Booking, SessionProposal # These are from scheduling_sessions
+from feedback.models import Feedback, Rating
+from progress.models import Goal
+# from .models import Resource # Uncomment if you have a Resource model in your dashboard app
 
 # This view will render the main dashboard page.
 @login_required
@@ -31,7 +28,6 @@ def analytics_dashboard(request):
     # --- Overall Platform Analytics (example data) ---
     total_users = User.objects.count()
     total_mentors = MentorProfile.objects.count()
-    from mentorship.models import MenteeProfile  # Add this import (adjust app name if needed)
     total_mentees = MenteeProfile.objects.count()
 
     total_sessions_scheduled = SessionSlot.objects.count()
@@ -40,6 +36,8 @@ def analytics_dashboard(request):
     total_mentorship_requests = MentorshipRequest.objects.count()
     pending_requests = MentorshipRequest.objects.filter(status='pending').count()
     accepted_requests = MentorshipRequest.objects.filter(status='accepted').count()
+    # Assuming 'assigned' is also a status you track
+    assigned_requests = MentorshipRequest.objects.filter(status='assigned').count()
 
     total_goals = Goal.objects.count()
     completed_goals = Goal.objects.filter(is_completed=True).count()
@@ -58,7 +56,6 @@ def analytics_dashboard(request):
     user_ratings_given = Rating.objects.filter(rater=request.user).count()
     user_ratings_received = Rating.objects.filter(rated_user=request.user).count()
 
-
     context = {
         'total_users': total_users,
         'total_mentors': total_mentors,
@@ -68,6 +65,7 @@ def analytics_dashboard(request):
         'total_mentorship_requests': total_mentorship_requests,
         'pending_requests': pending_requests,
         'accepted_requests': accepted_requests,
+        'assigned_requests': assigned_requests, # Include assigned requests
         'total_goals': total_goals,
         'completed_goals': completed_goals,
         'total_feedback_entries': total_feedback_entries,
@@ -78,17 +76,6 @@ def analytics_dashboard(request):
         'user_feedback_received': user_feedback_received,
         'user_ratings_given': user_ratings_given,
         'user_ratings_received': user_ratings_received,
-    }
-    return render(request, 'dashboard/analytics_dashboard.html', context)
-
-    context = {
-        'total_users': total_users,
-        'active_mentors': active_mentors,
-        'active_mentees': active_mentees,
-        'total_sessions': total_sessions,
-        'completed_sessions': completed_sessions,
-        'avg_rating': round(avg_rating, 2),
-        'total_feedback': total_feedback,
     }
     return render(request, 'dashboard/analytics_dashboard.html', context)
 
@@ -103,8 +90,8 @@ def export_report_csv(request):
     writer.writerow(['Total Users', User.objects.count()])
     writer.writerow(['Active Mentors', User.objects.filter(role='mentor').count()])
     writer.writerow(['Active Mentees', User.objects.filter(role='mentee').count()])
-    writer.writerow(['Total Sessions', Session.objects.count()])
-    writer.writerow(['Completed Sessions', Session.objects.filter(status='completed').count()])
+    writer.writerow(['Total Sessions', MentorshipSession.objects.count()]) # Corrected
+    writer.writerow(['Completed Sessions', MentorshipSession.objects.filter(is_completed=True).count()]) # Corrected
     writer.writerow(['Average Feedback Rating', Feedback.objects.aggregate(avg=models.Avg('rating'))['avg'] or 0])
     writer.writerow(['Total Feedback Entries', Feedback.objects.count()])
 
@@ -124,8 +111,8 @@ def export_report_pdf(request):
     p.drawString(100, y, f"Total Users: {User.objects.count()}")
     p.drawString(100, y - 20, f"Active Mentors: {User.objects.filter(role='mentor').count()}")
     p.drawString(100, y - 40, f"Active Mentees: {User.objects.filter(role='mentee').count()}")
-    p.drawString(100, y - 60, f"Total Sessions: {Session.objects.count()}")
-    p.drawString(100, y - 80, f"Completed Sessions: {Session.objects.filter(status='completed').count()}")
+    p.drawString(100, y - 60, f"Total Sessions: {MentorshipSession.objects.count()}") # Corrected
+    p.drawString(100, y - 80, f"Completed Sessions: {MentorshipSession.objects.filter(is_completed=True).count()}") # Corrected
     p.drawString(100, y - 100, f"Average Rating: {Feedback.objects.aggregate(avg=models.Avg('rating'))['avg'] or 0}")
     p.drawString(100, y - 120, f"Total Feedback Entries: {Feedback.objects.count()}")
 
@@ -138,15 +125,14 @@ def export_report_pdf(request):
     })
 
 
-
 @login_required
 def dashboard(request):
     total_users = User.objects.count()
     active_mentors = User.objects.filter(role='mentor').count()
     active_mentees = User.objects.filter(role='mentee').count()
-    total_sessions = Session.objects.count()
-    completed_sessions = Session.objects.filter(status='completed').count()
-    average_rating = Feedback.objects.aggregate(avg=Avg('rating'))['avg'] or 0
+    total_sessions = MentorshipSession.objects.count() # Corrected
+    completed_sessions = MentorshipSession.objects.filter(is_completed=True).count() # Corrected
+    average_rating = Feedback.objects.aggregate(avg=models.Avg('rating'))['avg'] or 0
     total_feedback = Feedback.objects.count()
 
     context = {
@@ -161,55 +147,54 @@ def dashboard(request):
 
     return render(request, 'dashboard/dashboard.html', context)
 
-from django.contrib.auth.decorators import user_passes_test
-from django.shortcuts import render
-from accounts.models import User
-from scheduling_sessions.models import Session
-from feedback.models import Feedback
 
-@user_passes_test(lambda u: u.is_superuser)
+# from django.contrib.auth.decorators import user_passes_test # Already imported login_required
+# from django.contrib.auth import get_user_model # Already imported User
+# from django.shortcuts import render, redirect # Already imported
+
+# User = get_user_model() # Already imported User directly
+
+@staff_member_required # Using staff_member_required instead of user_passes_test for consistency
 def custom_admin_dashboard(request):
+    # Consolidate duplicate custom_admin_dashboard definitions
+    # if not request.user.is_superuser: # staff_member_required handles this
+    #     return HttpResponseForbidden(render(request, '403.html'))
+
     context = {
         'total_users': User.objects.count(),
-        'total_sessions': Session.objects.count(),
+        'total_sessions': MentorshipSession.objects.count(), # Corrected
         'total_feedback': Feedback.objects.count(),
     }
     return render(request, 'dashboard/custom_admin_dashboard.html', context)
 
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect
-User = get_user_model()
-
-@user_passes_test(lambda u: u.is_superuser)
+@staff_member_required # Using staff_member_required for consistency
 def manage_users(request):
     users = User.objects.all()
     return render(request, 'dashboard/manage_users.html', {'users': users})
 
-@user_passes_test(lambda u: u.is_superuser)
+@staff_member_required # Using staff_member_required for consistency
 def manage_sessions(request):
-    sessions = Session.objects.all()
+    sessions = MentorshipSession.objects.all() # Corrected
     return render(request, 'dashboard/manage_sessions.html', {'sessions': sessions})
 
-from .models import Resource
+# from .models import Resource # Uncomment if you have this model
 
-@user_passes_test(lambda u: u.is_superuser)
+@staff_member_required # Using staff_member_required for consistency
 def manage_resources(request):
-    resources = Resource.objects.all()
-    return render(request, 'dashboard/manage_resources.html', {'resources': resources})
+    # resources = Resource.objects.all() # Uncomment if Resource model exists
+    messages.info(request, "Manage Resources view is a placeholder.")
+    return render(request, 'dashboard/manage_resources.html', {'resources': []}) # Placeholder for now
 
-from accounts.decorators import admin_required
+# Consolidate duplicate custom_admin_dashboard definitions (already handled above)
+# from accounts.decorators import admin_required # Uncomment if you define this custom decorator
+# @admin_required
+# def custom_admin_dashboard(request):
+#     return render(request, 'dashboard/admin_panel.html')
 
-@admin_required
-def custom_admin_dashboard(request):
-    return render(request, 'dashboard/admin_panel.html')
-
-from django.shortcuts import render
-from django.http import HttpResponseForbidden
-
-def custom_admin_dashboard(request):
-    if not request.user.is_superuser:
-        return HttpResponseForbidden(render(request, '403.html'))
-
-    return render(request, 'dashboard/custom_admin_dashboard.html')
-
+# Consolidate duplicate custom_admin_dashboard definitions (already handled above)
+# from django.shortcuts import render
+# from django.http import HttpResponseForbidden
+# def custom_admin_dashboard(request):
+#     if not request.user.is_superuser:
+#         return HttpResponseForbidden(render(request, '403.html'))
+#     return render(request, 'dashboard/custom_admin_dashboard.html')

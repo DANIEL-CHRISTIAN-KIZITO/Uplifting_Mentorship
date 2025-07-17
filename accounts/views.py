@@ -3,8 +3,22 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from .forms import UserRegistrationForm, UserLoginForm
+from django.utils import timezone
+from .forms import UserRegistrationForm, UserLoginForm, ProfileUpdateForm # <--- ProfileUpdateForm UNCOMMENTED
 from .models import User # Import your custom User model
+from mentorship.models import MenteeProfile, MentorProfile, MentorshipRequest, MentorshipSession, MentorshipAssignment # Import mentorship models
+
+# Django signals for superuser role (can be moved to signals.py or apps.py ready method)
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth import get_user_model
+User = get_user_model() # Re-get User model for signal
+
+@receiver(post_save, sender=User)
+def set_role_for_superuser(sender, instance, created, **kwargs):
+    if created and instance.is_superuser:
+        instance.role = 'admin'
+        instance.save()
 
 # Registration View
 def register(request):
@@ -56,21 +70,69 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     messages.info(request, "You have been logged out.")
-    return redirect(reverse('accounts:dashboard_home')) # Redirect to login page after logout
+    return redirect(reverse('accounts:login')) # Changed to login for clarity
 
-#code to handle my home page in views.py
+# Public Home Page View (if not authenticated, shows a welcome; if authenticated, redirects to dashboard)
 def dashboard_home(request):
     if request.user.is_authenticated:
         return redirect(reverse('accounts:dashboard'))  # Redirect to dashboard if logged in
     else:
-        return render(request, 'dashboard_home.html')  # Render home page for unauthenticated users   
-    
-    
-@login_required   
+        # This template should be in your project's base templates directory (e.g., templates/dashboard_home.html)
+        return render(request, 'dashboard_home.html') # Ensure this template exists and is public
+
+# Main Authenticated Dashboard View
+@login_required
 def dashboard(request):
-    # Access user-specific data here
     user_role = request.user.role if hasattr(request.user, 'role') else 'N/A'
     user_photo_url = request.user.photo.url if request.user.photo else None
+
+    mentorship_summary = {}
+
+    if user_role == 'mentee':
+        try:
+            mentee_profile = MenteeProfile.objects.get(user=request.user)
+            mentorship_summary['is_mentee'] = True
+            mentorship_summary['pending_requests_count'] = MentorshipRequest.objects.filter(
+                mentee=mentee_profile, status='pending'
+            ).count()
+            mentorship_summary['accepted_requests_count'] = MentorshipRequest.objects.filter(
+                mentee=mentee_profile, status='accepted'
+            ).count()
+            mentorship_summary['assigned_mentor'] = None
+            try:
+                assigned_assignment = MentorshipAssignment.objects.get(mentee=mentee_profile)
+                mentorship_summary['assigned_mentor'] = assigned_assignment.mentor
+            except MentorshipAssignment.DoesNotExist:
+                pass
+            mentorship_summary['upcoming_sessions_count'] = MentorshipSession.objects.filter(
+                mentee=mentee_profile, start_time__gte=timezone.now(), is_completed=False
+            ).count()
+            mentorship_summary['completed_sessions_count'] = MentorshipSession.objects.filter(
+                mentee=mentee_profile, is_completed=True
+            ).count()
+        except MenteeProfile.DoesNotExist:
+            mentorship_summary['is_mentee'] = False
+            messages.info(request, "You don't have a mentee profile yet. Create one to access mentee features.")
+
+    elif user_role == 'mentor':
+        try:
+            mentor_profile = MentorProfile.objects.get(user=request.user)
+            mentorship_summary['is_mentor'] = True
+            mentorship_summary['received_pending_requests_count'] = MentorshipRequest.objects.filter(
+                mentor=mentor_profile, status='pending'
+            ).count()
+            mentorship_summary['assigned_mentees_count'] = MentorshipAssignment.objects.filter(
+                mentor=mentor_profile
+            ).count()
+            mentorship_summary['upcoming_sessions_count'] = MentorshipSession.objects.filter(
+                mentor=mentor_profile, start_time__gte=timezone.now(), is_completed=False
+            ).count()
+            mentorship_summary['completed_sessions_count'] = MentorshipSession.objects.filter(
+                mentor=mentor_profile, is_completed=True
+            ).count()
+        except MentorProfile.DoesNotExist:
+            mentorship_summary['is_mentor'] = False
+            messages.info(request, "You don't have a mentor profile yet. Create one to access mentor features.")
 
     context = {
         'username': request.user.username,
@@ -78,44 +140,25 @@ def dashboard(request):
         'user_photo_url': user_photo_url,
         'receive_notifications': request.user.receive_notifications,
         'profile_visibility': request.user.profile_visibility,
-        # Add more data as needed for your dashboard
+        'mentorship_summary': mentorship_summary, # Pass the summary to the template
     }
+    # This renders a template in dashboard app, which is appropriate for the main dashboard
     return render(request, 'dashboard/dashboard.html', context)
 
-# accounts/views.py
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .forms import ProfileUpdateForm
-
+# --- Profile Management Views (UNCOMMENTED) ---
 @login_required
 def profile_detail(request):
     return render(request, 'accounts/profile_detail.html', {'user': request.user})
 
 @login_required
 def update_profile(request):
+    # ProfileUpdateForm is now imported at the top
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('accounts:dashboard')  # Or wherever you want to go after saving
+            messages.success(request, "Profile updated successfully!")
+            return redirect('accounts:dashboard')
     else:
         form = ProfileUpdateForm(instance=request.user)
     return render(request, 'accounts/update_profile.html', {'form': form})
-
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
-@receiver(post_save, sender=User)
-def set_role_for_superuser(sender, instance, created, **kwargs):
-    if created and instance.is_superuser:
-        instance.role = 'admin'
-        instance.save()
-
-
-
-
-
-

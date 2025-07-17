@@ -1,0 +1,49 @@
+{# scheduling_sessions/templates/scheduling_sessions/respond_to_proposal.html #}
+{% extends 'base.html' %}
+
+{% block title %}Respond to Proposal{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg p-4 rounded-3">
+                    <h2 class="text-center mb-4">Respond to Session Proposal</h2>
+
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li class="{{ message.tags }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <div class="mb-4 p-3 border rounded bg-light">
+                        <p><strong>Proposed By:</strong> {{ proposal.proposed_by.username }}</p>
+                        <p><strong>Mentee:</strong> {{ proposal.mentee.user.username }}</p>
+                        <p><strong>Mentor:</strong> {{ proposal.mentor.user.username }}</p>
+                        <p><strong>Proposed Time:</strong> {{ proposal.proposed_start_time|date:"Y-m-d H:i" }} - {{ proposal.proposed_end_time|date:"H:i" }}</p>
+                        <p><strong>Message:</strong> "{{ proposal.message|default:"No message provided." }}"</p>
+                        <p><strong>Current Status:</strong> <span class="badge bg-warning">{{ proposal.status|capfirst }}</span></p>
+                    </div>
+
+                    {% if proposal.status == 'pending' %}
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary w-100 rounded-2 py-2 mt-3">Submit Response</button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-info text-center" role="alert">
+                            This proposal has already been {{ proposal.status }}.
+                        </div>
+                    {% endif %}
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'scheduling_sessions:my_proposals' %}" class="text-decoration-none">Back to My Proposals</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

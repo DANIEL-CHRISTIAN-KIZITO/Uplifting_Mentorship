@@ -1,37 +1,96 @@
-{% extends "base.html" %}
-{% block title %}Available Slots{% endblock %}
+{# scheduling_sessions/templates/scheduling_sessions/available_slots.html #}
+{% extends 'base.html' %}
+{% load static %}
+{% load scheduling_filters %} {# <--- ADDED THIS LINE TO LOAD YOUR CUSTOM FILTERS #}
+
+{% block title %}Available Session Slots{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center">Available Slots for {{ mentor.username }}</h2>
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center text-primary">Find Your Next Mentorship Session</h1>
 
-    {% if slots %}
-        <table class="table table-bordered mt-4">
-            <thead class="table-light">
-                <tr>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Duration</th>
-                    <th>Topic</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for slot in slots %}
-                    <tr>
-                        <td>{{ slot.date }}</td>
-                        <td>{{ slot.time }}</td>
-                        <td>{{ slot.duration }} mins</td>
-                        <td>{{ slot.topic }}</td>
-                        <td>
-                            <a href="{% url 'sessions:book_slot' slot.id %}" class="btn btn-success btn-sm">Book</a>
-                        </td>
-                    </tr>
+        {% if messages %}
+            <ul class="messages list-unstyled text-center">
+                {% for message in messages %}
+                    <li class="alert alert-{{ message.tags }} rounded-3 shadow-sm">{{ message }}</li>
                 {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <div class="alert alert-info text-center mt-4">No available slots at the moment.</div>
-    {% endif %}
-</div>
+            </ul>
+        {% endif %}
+
+        {% if slots %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for slot in slots %}
+                    <div class="col">
+                        <div class="card h-100 shadow-lg border-0 rounded-3 overflow-hidden">
+                            <div class="card-header bg-gradient-primary text-white py-3">
+                                <h5 class="card-title mb-0 text-center">
+                                    <i class="bi bi-person-circle me-2"></i>
+                                    Mentor: {{ slot.mentor.user.username }}
+                                </h5>
+                            </div>
+                            <div class="card-body d-flex flex-column p-4">
+                                <p class="card-text mb-2">
+                                    <i class="bi bi-calendar-event me-2 text-info"></i>
+                                    <strong>Date:</strong> {{ slot.start_time|date:"l, F j, Y" }}
+                                </p>
+                                <p class="card-text mb-2">
+                                    <i class="bi bi-clock me-2 text-success"></i>
+                                    <strong>Time:</strong> {{ slot.start_time|date:"H:i A" }} - {{ slot.end_time|date:"H:i A" }}
+                                </p>
+                                <p class="card-text mb-3">
+                                    <i class="bi bi-hourglass-split me-2 text-warning"></i>
+                                    <strong>Duration:</strong>
+                                    {% with duration_seconds=slot.end_time|timesince_seconds:slot.start_time %}
+                                        {% if duration_seconds >= 3600 %}
+                                            {{ duration_seconds|floordiv:3600 }} hour{% if duration_seconds|floordiv:3600 > 1 %}s{% endif %}
+                                            {% if duration_seconds|mod:3600 > 0 %}
+                                                {{ duration_seconds|mod:3600|floordiv:60 }} min{% if duration_seconds|mod:3600|floordiv:60 > 1 %}s{% endif %}
+                                            {% endif %}
+                                        {% elif duration_seconds >= 60 %}
+                                            {{ duration_seconds|floordiv:60 }} min{% if duration_seconds|floordiv:60 > 1 %}s{% endif %}
+                                        {% else %}
+                                            Less than a minute
+                                        {% endif %}
+                                    {% endwith %}
+                                </p>
+                                <div class="mt-auto text-center pt-3">
+                                    <a href="{% url 'scheduling_sessions:book_slot' slot.pk %}" class="btn btn-success btn-lg rounded-pill shadow-sm animate-button">Book This Slot</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center py-4 rounded-3 shadow-sm" role="alert">
+                <h4 class="alert-heading">No Available Session Slots!</h4>
+                <p>It looks like all slots are currently booked or no new slots have been added by mentors.</p>
+                <hr>
+                <p class="mb-0">Please check back later, or explore other mentors to propose a session directly.</p>
+                <a href="{% url 'mentorship:mentor_list' %}" class="btn btn-outline-info mt-3">Browse Mentors</a>
+            </div>
+        {% endif %}
+
+        <div class="mt-5 text-center">
+            <a href="{% url 'accounts:dashboard' %}" class="btn btn-outline-secondary me-2 rounded-pill">Back to Dashboard</a>
+            <a href="{% url 'scheduling_sessions:my_bookings' %}" class="btn btn-outline-primary rounded-pill">View My Bookings</a>
+        </div>
+    </div>
+
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+        }
+        .animate-button {
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+        .animate-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0.5rem 1rem rgba(0, 123, 255, 0.25) !important;
+        }
+        .card {
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+    </style>
 {% endblock %}

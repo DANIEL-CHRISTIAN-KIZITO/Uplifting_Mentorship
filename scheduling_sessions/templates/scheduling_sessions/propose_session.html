@@ -1,0 +1,59 @@
+{# scheduling_sessions/templates/scheduling_sessions/propose_session.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Propose Session{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg p-4 rounded-3">
+                    {% if is_mentee_proposing and mentor %}
+                        <h2 class="text-center mb-4">Propose Session to {{ mentor.user.username }}</h2>
+                        <p class="text-center text-muted">Expertise: {{ mentor.expertise }}</p>
+                    {% elif is_mentor_proposing %}
+                        <h2 class="text-center mb-4">Propose Session to a Mentee</h2>
+                    {% else %}
+                        <h2 class="text-center mb-4">Propose Session</h2>
+                    {% endif %}
+
+                    {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                                <li class="{{ message.tags }}">{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if is_mentor_proposing %}
+                            <div class="mb-3">
+                                <label for="id_mentee_pk" class="form-label">Select Mentee:</label>
+                                <select name="mentee_pk" id="id_mentee_pk" class="form-control">
+                                    <option value="">--- Select a Mentee ---</option>
+                                    {% for mentee_obj in mentees_for_proposal %}
+                                        <option value="{{ mentee_obj.pk }}">{{ mentee_obj.user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        {% endif %}
+
+                        {{ form.as_p }}
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-2 py-2 mt-3">Send Proposal</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="{% url 'scheduling_sessions:my_proposals' %}" class="text-decoration-none">View My Proposals</a>
+                        {# Only show "Back to Mentor Profile" if a mentor object is available #}
+                        {% if mentor %} {# <--- ADDED THIS CONDITION #}
+                            <a href="{% url 'mentorship:mentor_detail' mentor.pk %}" class="text-decoration-none ms-3">Back to Mentor Profile</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

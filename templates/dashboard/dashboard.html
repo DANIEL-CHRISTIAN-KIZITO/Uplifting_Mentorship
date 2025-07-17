@@ -1,72 +1,69 @@
-{% extends "base.html" %}
-{% load static %}
-{% block title %}Dashboard{% endblock %}
+{% extends 'base.html' %} {# Extend your base template #}
+{% load static %} {# Load static files for images #}
+
+{% block title %}User Dashboard{% endblock %}
 
 {% block content %}
-<div class="d-flex" style="min-height: 100vh; width: 100%; margin-left: 0;">
-    
+<div class="d-flex flex-column flex-lg-row"> {# Flex container for sidebar and main content #}
     <!-- Dark Sidebar -->
-    <nav class="bg-dark text-white" style="width: 250px; min-height: 100vh; margin-left: 0;">
-        <div class="p-3">
-            <h4 class="text-light mb-4">Dashboard</h4>
+    <nav class="bg-dark text-white sidebar shadow-lg"> {# Added shadow-lg for depth #}
+        <div class="p-4"> {# Increased padding for better spacing #}
+            <h4 class="text-light mb-4 border-bottom pb-2">Dashboard Menu</h4> {# Styled heading #}
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="{% url 'mentorship:search_mentors' %}">
-                        <i class="bi bi-person-check me-2"></i> Mentorship
+                    <a class="nav-link text-white d-flex align-items-center" href="{% url 'mentorship:search_mentors' %}">
+                        <i class="bi bi-person-check me-2 fs-5"></i> Mentorship
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="{% url 'scheduling_sessions:my_bookings' %}">
-                        <i class="bi bi-calendar-event me-2"></i> Sessions
+                    <a class="nav-link text-white d-flex align-items-center" href="{% url 'scheduling_sessions:propose_session_general' %}">
+                        <i class="bi bi-calendar-event me-2 fs-5"></i> Sessions
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="{% url 'chat:chat_room_list' %}">
-                        <i class="bi bi-chat-dots me-2"></i> Messages
+                    <a class="nav-link text-white d-flex align-items-center" href="{% url 'chat:chat_room_list' %}">
+                        <i class="bi bi-chat-dots me-2 fs-5"></i> Messages
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="{% url 'progress:my_goals' %}">
-                        <i class="bi bi-bar-chart-steps me-2"></i> Progress
+                    <a class="nav-link text-white d-flex align-items-center" href="{% url 'progress:my_goals' %}">
+                        <i class="bi bi-bar-chart-steps me-2 fs-5"></i> Progress
                     </a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white" href="{% url 'feedback:submit_feedback' %}">
-                        <i class="bi bi-clipboard-check me-2"></i> Feedback
+                    <a class="nav-link text-white d-flex align-items-center" href="{% url 'feedback:submit_feedback' %}">
+                        <i class="bi bi-clipboard-check me-2 fs-5"></i> Feedback
                     </a>
                 </li>
-                <!-- Inside your dashboard sidebar or header -->
 
                 {% if request.user.role == 'mentor' %}
-                <li class="nav-item mt-3">
-                <a class="nav-link text-info" href="{% url 'mentorship:my_mentees' %}">
-                        <i class="bi bi-people-fill me-2"></i> My Mentees
+                <li class="nav-item mt-3 border-top pt-3"> {# Separator #}
+                    <a class="nav-link text-info d-flex align-items-center" href="{% url 'mentorship:my_mentees' %}">
+                        <i class="bi bi-people-fill me-2 fs-5"></i> My Mentees
                     </a>
                 </li>
                 {% endif %}
 
                 {% if request.user.role == 'mentee' %}
-                <li class="nav-item mt-3">
-                    <a class="nav-link text-success" href="{% url 'mentorship:search_mentors' %}">
-                        <i class="bi bi-search me-2"></i> Find Mentor
+                <li class="nav-item mt-3 border-top pt-3"> {# Separator #}
+                    <a class="nav-link text-success d-flex align-items-center" href="{% url 'mentorship:mentor_list' %}">
+                        <i class="bi bi-search me-2 fs-5"></i> Find Mentor
                     </a>
                 </li>
                 {% endif %}
 
-                
-
                 {% if user.is_superuser %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard:custom_admin' %}">
-                        <i class="bi bi-speedometer2 me-1"></i> Admin Panel
+                <li class="nav-item mt-3 border-top pt-3"> {# Separator #}
+                    <a class="nav-link text-warning d-flex align-items-center" href="{% url 'dashboard:custom_admin' %}">
+                        <i class="bi bi-speedometer2 me-2 fs-5"></i> Admin Panel
                     </a>
                 </li>
                 {% endif %}
 
                 {% if request.user.is_staff %}
-                <li class="nav-item mt-3">
-                    <a class="nav-link text-warning" href="{% url 'dashboard:analytics_dashboard' %}">
-                        <i class="bi bi-graph-up me-2"></i> Analytics
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-warning d-flex align-items-center" href="{% url 'dashboard:analytics_dashboard' %}">
+                        <i class="bi bi-graph-up me-2 fs-5"></i> Analytics
                     </a>
                 </li>
                 {% endif %}
@@ -76,23 +73,172 @@
 
 
     <!-- Main Content Area -->
-    <main class="flex-grow-1 p-4">
-        <h2 class="mb-4">Welcome {{ request.user.username }}</h2>
+    <main class="flex-grow-1 p-4 bg-light"> {# Added bg-light for main content background #}
+        <h2 class="mb-4 text-primary">Welcome, {{ username }}!</h2>
 
-        <!-- Add your cards, analytics, or charts here -->
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <!-- Example card -->
-            <div class="col">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center">
-                        <i class="bi bi-bar-chart-line display-5 text-primary"></i>
-                        <h5 class="card-title mt-3">Mentorship Summary</h5>
-                        <p class="card-text">Overview of your sessions and requests.</p>
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-10"> {# Adjusted column size for main content #}
+                <div class="card shadow-lg p-4 rounded-3 text-center border-0">
+                    <div class="user-info mb-3">
+                        {% if user_photo_url %}
+                            <img src="{{ user_photo_url }}" alt="Profile Photo" class="rounded-circle mb-3 shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #007bff;">
+                        {% else %}
+                            <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Photo" class="rounded-circle mb-3 shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #007bff;">
+                        {% endif %}
+                        <h2 class="h4 mb-1 text-dark">{{ username }}</h2>
+                        <p class="text-muted mb-1">Role: <span class="badge bg-primary px-3 py-2 rounded-pill">{{ user_role|capfirst }}</span></p>
+                        <p class="text-muted mb-0">Notifications: <span class="badge {% if receive_notifications %}bg-success{% else %}bg-danger{% endif %} px-3 py-2 rounded-pill">{{ receive_notifications|yesno:"On,Off" }}</span></p>
+                        <p class="text-muted">Profile Visibility: <span class="badge bg-secondary px-3 py-2 rounded-pill">{{ profile_visibility|capfirst }}</span></p>
+                    </div>
+
+                    <hr class="my-4 border-primary">
+
+                    <h3 class="mb-4 text-secondary">Mentorship Summary</h3>
+
+                    {% if mentorship_summary.is_mentee %}
+                        <div class="row g-4 text-start">
+                            <div class="col-md-6">
+                                <div class="card bg-white h-100 shadow-sm border-start border-success border-4 rounded-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-success mb-3"><i class="bi bi-person-check-fill me-2"></i> Your Mentor</h5>
+                                        {% if mentorship_summary.assigned_mentor %}
+                                            <p class="card-text mb-1">Assigned to: <strong class="text-dark">{{ mentorship_summary.assigned_mentor.user.username }}</strong></p>
+                                            <p class="card-text"><small class="text-muted">Expertise: {{ mentorship_summary.assigned_mentor.expertise }}</small></p>
+                                            <div class="mt-3">
+                                                <a href="{% url 'mentorship:mentor_detail' mentorship_summary.assigned_mentor.pk %}" class="btn btn-sm btn-outline-primary rounded-pill">View Mentor Profile</a>
+                                            </div>
+                                        {% else %}
+                                            <p class="card-text text-danger">You currently do not have an assigned mentor.</p>
+                                            <div class="mt-3">
+                                                <a href="{% url 'mentorship:mentor_list' %}" class="btn btn-sm btn-primary rounded-pill">Find a Mentor</a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-white h-100 shadow-sm border-start border-info border-4 rounded-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-info mb-3"><i class="bi bi-list-check me-2"></i> Your Requests & Sessions</h5>
+                                        <p class="card-text mb-1">Pending Requests: <strong class="badge bg-warning text-dark rounded-pill">{{ mentorship_summary.pending_requests_count }}</strong></p>
+                                        <p class="card-text mb-1">Accepted Requests: <strong class="badge bg-success rounded-pill">{{ mentorship_summary.accepted_requests_count }}</strong></p>
+                                        <p class="card-text mb-1">Upcoming Sessions: <strong class="badge bg-primary rounded-pill">{{ mentorship_summary.upcoming_sessions_count }}</strong></p>
+                                        <p class="card-text mb-1">Completed Sessions: <strong class="badge bg-secondary rounded-pill">{{ mentorship_summary.completed_sessions_count }}</strong></p>
+                                        <div class="mt-3">
+                                            <a href="{% url 'scheduling_sessions:my_proposals' %}" class="btn btn-sm btn-outline-info rounded-pill me-2">Manage Proposals</a>
+                                            <a href="{% url 'scheduling_sessions:my_bookings' %}" class="btn btn-sm btn-outline-info rounded-pill">View Bookings</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif mentorship_summary.is_mentor %}
+                        <div class="row g-4 text-start">
+                            <div class="col-md-6">
+                                <div class="card bg-white h-100 shadow-sm border-start border-success border-4 rounded-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-success mb-3"><i class="bi bi-people-fill me-2"></i> Your Mentees</h5>
+                                        <p class="card-text mb-1">Assigned Mentees: <strong class="badge bg-primary rounded-pill">{{ mentorship_summary.assigned_mentees_count }}</strong></p>
+                                        <div class="mt-3">
+                                            <a href="{% url 'mentorship:my_mentees' %}" class="btn btn-sm btn-outline-primary rounded-pill">View My Mentees</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-white h-100 shadow-sm border-start border-info border-4 rounded-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-info mb-3"><i class="bi bi-bell-fill me-2"></i> Your Requests & Sessions</h5>
+                                        <p class="card-text mb-1">Pending Requests Received: <strong class="badge bg-warning text-dark rounded-pill">{{ mentorship_summary.received_pending_requests_count }}</strong></p>
+                                        <p class="card-text mb-1">Upcoming Sessions: <strong class="badge bg-primary rounded-pill">{{ mentorship_summary.upcoming_sessions_count }}</strong></p>
+                                        <p class="card-text mb-1">Completed Sessions: <strong class="badge bg-secondary rounded-pill">{{ mentorship_summary.completed_sessions_count }}</strong></p>
+                                        <div class="mt-3">
+                                            <a href="{% url 'mentorship:manage_requests' %}" class="btn btn-sm btn-outline-info rounded-pill me-2">Manage Requests</a>
+                                            <a href="{% url 'scheduling_sessions:my_proposals' %}" class="btn btn-sm btn-outline-info rounded-pill">Manage Proposals</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning text-center py-4 rounded-3 shadow-sm" role="alert">
+                            <h4 class="alert-heading">No Mentorship Summary Available</h4>
+                            <p>It looks like your profile role is not set as a Mentor or Mentee, or your profile is incomplete.</p>
+                            <hr>
+                            <p class="mb-0">Please ensure your profile is complete and your role is correctly assigned to view your mentorship summary.</p>
+                            {# You might add a link to profile update here if you have one #}
+                            {# <a href="{% url 'accounts:update_profile' %}" class="btn btn-outline-warning mt-3">Update Profile</a> #}
+                        </div>
+                    {% endif %}
+
+                    <hr class="my-4 border-primary">
+
+                    <div class="mt-3">
+                        <a href="{% url 'accounts:logout' %}" class="btn btn-danger rounded-pill px-4 py-2 shadow-sm">Logout</a>
                     </div>
                 </div>
             </div>
-            <!-- Add more cards as needed -->
         </div>
     </main>
 </div>
+
+<style>
+    /* Custom styles for sidebar responsiveness */
+    .sidebar {
+        width: 250px;
+        min-height: 100vh; /* Full height */
+        position: sticky; /* Makes it stick to the top when scrolling */
+        top: 0; /* Align to the top */
+        left: 0;
+        z-index: 1000; /* Ensure it's above other content */
+        padding-top: 20px; /* Adjust as needed */
+    }
+
+    /* Adjust sidebar for smaller screens */
+    @media (max-width: 991.98px) { /* Bootstrap's 'lg' breakpoint */
+        .sidebar {
+            width: 100%;
+            min-height: auto; /* Remove fixed height on small screens */
+            position: relative; /* Remove sticky on small screens */
+            padding-bottom: 20px;
+        }
+        .sidebar .nav {
+            flex-direction: row !important; /* Make nav items horizontal on small screens */
+            justify-content: center;
+            flex-wrap: wrap; /* Allow wrapping */
+        }
+        .sidebar .nav-item {
+            margin: 5px 10px; /* Adjust spacing */
+        }
+        .sidebar h4 {
+            text-align: center;
+            border-bottom: none !important; /* Remove border on small screens */
+            padding-bottom: 0 !important;
+        }
+    }
+
+    /* Additional styling for cards and badges */
+    .card {
+        border: none;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    }
+    .badge {
+        font-size: 0.85em;
+        padding: 0.5em 0.8em;
+    }
+    .btn.rounded-pill {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    .card-body .card-text strong {
+        font-size: 1.1em; /* Slightly larger text for counts */
+    }
+    .card-title i {
+        vertical-align: middle; /* Align icons with text */
+    }
+</style>
 {% endblock %}

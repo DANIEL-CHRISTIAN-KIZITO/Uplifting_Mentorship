@@ -1,0 +1,74 @@
+{# scheduling_sessions/templates/scheduling_sessions/my_proposals.html #}
+{% extends 'base.html' %}
+
+{% block title %}My Session Proposals{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center">My Session Proposals</h1>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4 rounded-3">
+                    <div class="card-header bg-primary text-white">
+                        Proposals Sent by Me
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for proposal in sent_proposals %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    To: <strong>{{ proposal.mentor.user.username }}</strong>
+                                    <br>
+                                    Time: {{ proposal.proposed_start_time|date:"Y-m-d H:i" }} - {{ proposal.proposed_end_time|date:"H:i" }}
+                                    <br>
+                                    <small class="text-muted">Status: {{ proposal.status|capfirst }}</small>
+                                </span>
+                                {% if proposal.status == 'pending' %}
+                                    <a href="{% url 'scheduling_sessions:respond_to_proposal' proposal.pk %}" class="btn btn-sm btn-info">View/Respond</a>
+                                {% endif %}
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">No proposals sent yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4 rounded-3">
+                    <div class="card-header bg-success text-white">
+                        Proposals Received by Me
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for proposal in received_proposals %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    From: <strong>{{ proposal.mentee.user.username }}</strong>
+                                    <br>
+                                    Time: {{ proposal.proposed_start_time|date:"Y-m-d H:i" }} - {{ proposal.proposed_end_time|date:"H:i" }}
+                                    <br>
+                                    <small class="text-muted">Status: {{ proposal.status|capfirst }}</small>
+                                </span>
+                                {% if proposal.status == 'pending' %}
+                                    <a href="{% url 'scheduling_sessions:respond_to_proposal' proposal.pk %}" class="btn btn-sm btn-warning">Respond</a>
+                                {% endif %}
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">No proposals received yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+{% endblock %}
