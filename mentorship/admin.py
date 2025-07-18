@@ -1,14 +1,9 @@
-from django.contrib import admin
-from .models import MentorshipRequest, MentorshipAssignment
-
-admin.site.register(MentorshipRequest)
-admin.site.register(MentorshipAssignment)
-
 # mentorship/admin.py
 from django.contrib import admin
-from .models import MentorProfile
+from .models import MentorProfile, MenteeProfile, MentorshipRequest, MentorshipSession, MentorshipAssignment # <--- ADDED MentorshipAssignment
 
-@admin.register(MentorProfile)
-class MentorProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'expertise', 'location', 'available_for_mentorship')
-    list_filter = ('available_for_mentorship', 'location', 'expertise')
+admin.site.register(MentorProfile)
+admin.site.register(MenteeProfile)
+admin.site.register(MentorshipRequest)
+admin.site.register(MentorshipSession)
+admin.site.register(MentorshipAssignment) # <--- REGISTERED MentorshipAssignment

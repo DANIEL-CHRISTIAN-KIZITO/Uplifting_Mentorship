@@ -1,30 +1,90 @@
-{% extends "base.html" %}
+{# progress/templates/progress/goal_detail.html #}
+{% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Goal: {{ goal.title }}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-3">Goal Details</h2>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow-lg rounded-3 border-0 mb-4">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h1 class="mb-0 text-center"><i class="bi bi-bullseye me-2"></i> Goal: {{ goal.title }}</h1>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="lead text-muted text-center">{{ goal.description|default:"No detailed description provided." }}</p>
+                        <hr>
+                        <div class="row text-center mb-3">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-dark"><strong>Owner:</strong> {{ goal.user.username }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-0 text-dark"><strong>Target Date:</strong> {{ goal.target_date|default:"N/A" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-0 text-dark"><strong>Status:</strong>
+                                    <span class="badge {% if goal.is_completed %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                        {% if goal.is_completed %}Completed{% else %}In Progress{% endif %}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h4 class="card-title">{{ goal.title }}</h4>
-            <p class="card-text">{{ goal.description }}</p>
+                        {# Progress Update Form (visible only to authorized mentors) #}
+                        {% if is_mentor_reviewer %}
+                            <hr class="my-4">
+                            <h4 class="mb-3 text-secondary text-center"><i class="bi bi-pencil-square me-2"></i> Record Progress Update</h4>
+                            <div class="card bg-light p-3 mb-4 rounded-3 shadow-sm">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {% for field in progress_form %}
+                                        <div class="mb-3">
+                                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                            {{ field }}
+                                            {% for error in field.errors %}
+                                                <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endfor %}
+                                    <button type="submit" class="btn btn-info rounded-pill px-4 py-2">Submit Update</button>
+                                </form>
+                            </div>
+                        {% endif %}
 
-            <ul class="list-group list-group-flush my-3">
-                <li class="list-group-item"><strong>Status:</strong> {{ goal.status }}</li>
-                <li class="list-group-item"><strong>Progress:</strong> {{ goal.progress }}%</li>
-                <li class="list-group-item"><strong>Due Date:</strong> {{ goal.due_date }}</li>
-            </ul>
+                        <hr class="my-4">
+                        <h4 class="mb-3 text-secondary text-center"><i class="bi bi-clock-history me-2"></i> Progress History</h4>
+                        {% if updates %}
+                            <div class="list-group">
+                                {% for update in updates %}
+                                    <div class="list-group-item list-group-item-action flex-column align-items-start mb-2 rounded-3 shadow-sm">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1 text-dark">Update on {{ update.date|date:"F j, Y" }}</h5>
+                                            <small class="text-muted">{{ update.timestamp|timesince }} ago</small>
+                                        </div>
+                                        <p class="mb-1">{{ update.notes }}</p>
+                                        <small>Progress: <span class="badge bg-primary">{{ update.progress_percentage }}%</span></small>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info text-center py-3 rounded-3 shadow-sm" role="alert">
+                                No progress updates recorded yet for this goal.
+                            </div>
+                        {% endif %}
 
-            {% if goal.notes %}
-                <div class="alert alert-secondary">
-                    <strong>Notes:</strong><br>
-                    {{ goal.notes }}
+                        <div class="mt-4 text-center">
+                            {% if is_mentee_owner %}
+                                <a href="{% url 'progress:my_goals' %}" class="btn btn-secondary rounded-pill px-4 me-2">Back to My Goals</a>
+                            {% elif is_mentor_reviewer %}
+                                <a href="{% url 'progress:mentee_progress_overview' %}" class="btn btn-secondary rounded-pill px-4 me-2">Back to Mentees' Progress</a>
+                            {% else %}
+                                <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary rounded-pill px-4 me-2">Back to Dashboard</a>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-            {% endif %}
+            </div>
         </div>
     </div>
-
-    <a href="{% url 'progress:my_goals' %}" class="btn btn-outline-primary mt-4">← Back to My Goals</a>
-</div>
 {% endblock %}

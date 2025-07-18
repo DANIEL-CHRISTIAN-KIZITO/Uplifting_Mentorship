@@ -1,0 +1,70 @@
+{# progress/templates/progress/mentee_progress_overview.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mentees' Progress Overview{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center text-primary">Your Mentees' Progress</h1>
+
+        {% if messages %}
+            <ul class="messages list-unstyled text-center">
+                {% for message in messages %}
+                    <li class="alert alert-{{ message.tags }} rounded-3 shadow-sm">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if mentees_with_goals %}
+            <div class="row row-cols-1 g-4">
+                {% for item in mentees_with_goals %}
+                    <div class="col">
+                        <div class="card shadow-lg rounded-3 border-start border-primary border-4">
+                            <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0 text-dark"><i class="bi bi-person-fill me-2"></i> Mentee: {{ item.mentee.user.username }}</h4>
+                                <div>
+                                    <span class="badge bg-info me-2">Total Goals: {{ item.total_goals }}</span>
+                                    <span class="badge bg-success">Completed: {{ item.completed_goals }}</span>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                {% if item.goals %}
+                                    <h5 class="mb-3 text-secondary">Goals:</h5>
+                                    <ul class="list-group list-group-flush">
+                                        {% for goal in item.goals %}
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <a href="{% url 'progress:goal_detail' goal.pk %}" class="text-decoration-none text-dark h6">{{ goal.title }}</a>
+                                                    <small class="d-block text-muted">{{ goal.description|truncatechars:80 }}</small>
+                                                </div>
+                                                <span class="badge {% if goal.is_completed %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                                    {% if goal.is_completed %}Completed{% else %}In Progress{% endif %}
+                                                </span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <div class="alert alert-info text-center py-3 rounded-3 shadow-sm" role="alert">
+                                        {{ item.mentee.user.username }} has not set any goals yet.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center py-4 rounded-3 shadow-sm" role="alert">
+                <h4 class="alert-heading">No Assigned Mentees or Goals Found!</h4>
+                <p>It looks like you don't have any assigned mentees with set goals.</p>
+                <hr>
+                <p class="mb-0">Once mentees set their goals, you'll see their progress here.</p>
+            </div>
+        {% endif %}
+
+        <div class="mt-4 text-center">
+            <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary rounded-pill px-4">Back to Dashboard</a>
+        </div>
+    </div>
+{% endblock %}

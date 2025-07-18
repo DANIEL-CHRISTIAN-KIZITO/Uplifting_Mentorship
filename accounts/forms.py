@@ -32,13 +32,26 @@ class UserLoginForm(AuthenticationForm):
     )
     # No need for a custom clean method unless you have specific cross-field validation
     # that AuthenticationForm doesn't cover.
-# accounts/forms.py
-from django import forms
-from django.contrib.auth import get_user_model
 
-User = get_user_model()
-
+# NEW: Profile Update Form
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'bio', 'expertise', 'interests', 'contact_info', 'profile_photo']
+        fields = ['username', 'email', 'photo', 'receive_notifications', 'profile_visibility']
+        # You can add or remove fields here based on what you want users to be able to update.
+        # 'role' is typically not updated by the user themselves.
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'photo': forms.FileInput(attrs={'class': 'form-control'}), # For file uploads
+            'receive_notifications': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'profile_visibility': forms.Select(attrs={'class': 'form-select'}),
+        }
+        labels = {
+            'username': 'Username',
+            'email': 'Email Address',
+            'photo': 'Profile Photo',
+            'receive_notifications': 'Receive Email Notifications',
+            'profile_visibility': 'Profile Visibility',
+        }
+

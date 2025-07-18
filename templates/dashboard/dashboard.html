@@ -4,7 +4,7 @@
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-column flex-lg-row"> {# Flex container for sidebar and main content #}
+<div class="d-flex flex-column flex-lg-row min-vh-100"> {# Flex container for sidebar and main content, min-vh-100 for full height #}
     <!-- Dark Sidebar -->
     <nav class="bg-dark text-white sidebar shadow-lg"> {# Added shadow-lg for depth #}
         <div class="p-4"> {# Increased padding for better spacing #}
@@ -23,6 +23,9 @@
                 <li class="nav-item mb-2">
                     <a class="nav-link text-white d-flex align-items-center" href="{% url 'chat:chat_room_list' %}">
                         <i class="bi bi-chat-dots me-2 fs-5"></i> Messages
+                        {% if chat_summary.total_unread_messages > 0 %}
+                            <span class="badge bg-danger ms-auto rounded-pill">{{ chat_summary.total_unread_messages }}</span>
+                        {% endif %}
                     </a>
                 </li>
                 <li class="nav-item mb-2">
@@ -79,26 +82,34 @@
         <div class="row justify-content-center mb-4">
             <div class="col-lg-10"> {# Adjusted column size for main content #}
                 <div class="card shadow-lg p-4 rounded-3 text-center border-0">
-                    <div class="user-info mb-3">
-                        {% if user_photo_url %}
-                            <img src="{{ user_photo_url }}" alt="Profile Photo" class="rounded-circle mb-3 shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #007bff;">
-                        {% else %}
-                            <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Photo" class="rounded-circle mb-3 shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #007bff;">
-                        {% endif %}
-                        <h2 class="h4 mb-1 text-dark">{{ username }}</h2>
-                        <p class="text-muted mb-1">Role: <span class="badge bg-primary px-3 py-2 rounded-pill">{{ user_role|capfirst }}</span></p>
-                        <p class="text-muted mb-0">Notifications: <span class="badge {% if receive_notifications %}bg-success{% else %}bg-danger{% endif %} px-3 py-2 rounded-pill">{{ receive_notifications|yesno:"On,Off" }}</span></p>
-                        <p class="text-muted">Profile Visibility: <span class="badge bg-secondary px-3 py-2 rounded-pill">{{ profile_visibility|capfirst }}</span></p>
+                    {# Profile Photo and User Info - Rearranged to left-right #}
+                    <div class="user-info mb-3 d-flex align-items-center justify-content-center flex-column flex-md-row"> {# Added flex-column flex-md-row for responsiveness #}
+                        <div class="me-md-4 mb-3 mb-md-0"> {# Margin for spacing, responsive #}
+                            {% if user_photo_url %}
+                                <img src="{{ user_photo_url }}" alt="Profile Photo" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #007bff;">
+                            {% else %}
+                                {# The 'rounded-circle' class ensures the image is circular #}
+                                <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Photo" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #007bff;">
+                            {% endif %}
+                        </div>
+                        <div class="text-center text-md-start"> {# Text alignment responsive #}
+                            <h2 class="h4 mb-1 text-dark">{{ username }}</h2>
+                            <p class="text-muted mb-1">Role: <span class="badge bg-primary px-3 py-2 rounded-pill">{{ user_role|capfirst }}</span></p>
+                            <p class="text-muted mb-0">Notifications: <span class="badge {% if receive_notifications %}bg-success{% else %}bg-danger{% endif %} px-3 py-2 rounded-pill">{{ receive_notifications|yesno:"On,Off" }}</span></p>
+                            <p class="text-muted">Profile Visibility: <span class="badge bg-secondary px-3 py-2 rounded-pill">{{ profile_visibility|capfirst }}</span></p>
+                        </div>
                     </div>
 
                     <hr class="my-4 border-primary">
 
                     <h3 class="mb-4 text-secondary">Mentorship Summary</h3>
 
-                    {% if mentorship_summary.is_mentee %}
-                        <div class="row g-4 text-start">
-                            <div class="col-md-6">
-                                <div class="card bg-white h-100 shadow-sm border-start border-success border-4 rounded-3">
+                    {# Consolidated row for all summary cards to create a uniform grid #}
+                    <div class="row g-4 mb-4">
+                        {# Mentorship Status/Your Mentor/Mentees Card #}
+                        <div class="col-md-6">
+                            {% if mentorship_summary.is_mentee %}
+                                <div class="card bg-white h-100 shadow-sm border-start border-success border-4 rounded-3 text-start">
                                     <div class="card-body">
                                         <h5 class="card-title text-success mb-3"><i class="bi bi-person-check-fill me-2"></i> Your Mentor</h5>
                                         {% if mentorship_summary.assigned_mentor %}
@@ -115,27 +126,8 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card bg-white h-100 shadow-sm border-start border-info border-4 rounded-3">
-                                    <div class="card-body">
-                                        <h5 class="card-title text-info mb-3"><i class="bi bi-list-check me-2"></i> Your Requests & Sessions</h5>
-                                        <p class="card-text mb-1">Pending Requests: <strong class="badge bg-warning text-dark rounded-pill">{{ mentorship_summary.pending_requests_count }}</strong></p>
-                                        <p class="card-text mb-1">Accepted Requests: <strong class="badge bg-success rounded-pill">{{ mentorship_summary.accepted_requests_count }}</strong></p>
-                                        <p class="card-text mb-1">Upcoming Sessions: <strong class="badge bg-primary rounded-pill">{{ mentorship_summary.upcoming_sessions_count }}</strong></p>
-                                        <p class="card-text mb-1">Completed Sessions: <strong class="badge bg-secondary rounded-pill">{{ mentorship_summary.completed_sessions_count }}</strong></p>
-                                        <div class="mt-3">
-                                            <a href="{% url 'scheduling_sessions:my_proposals' %}" class="btn btn-sm btn-outline-info rounded-pill me-2">Manage Proposals</a>
-                                            <a href="{% url 'scheduling_sessions:my_bookings' %}" class="btn btn-sm btn-outline-info rounded-pill">View Bookings</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% elif mentorship_summary.is_mentor %}
-                        <div class="row g-4 text-start">
-                            <div class="col-md-6">
-                                <div class="card bg-white h-100 shadow-sm border-start border-success border-4 rounded-3">
+                            {% elif mentorship_summary.is_mentor %}
+                                <div class="card bg-white h-100 shadow-sm border-start border-success border-4 rounded-3 text-start">
                                     <div class="card-body">
                                         <h5 class="card-title text-success mb-3"><i class="bi bi-people-fill me-2"></i> Your Mentees</h5>
                                         <p class="card-text mb-1">Assigned Mentees: <strong class="badge bg-primary rounded-pill">{{ mentorship_summary.assigned_mentees_count }}</strong></p>
@@ -144,32 +136,91 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card bg-white h-100 shadow-sm border-start border-info border-4 rounded-3">
+                            {% else %}
+                                <div class="card bg-white h-100 shadow-sm border-start border-warning border-4 rounded-3 text-start">
                                     <div class="card-body">
-                                        <h5 class="card-title text-info mb-3"><i class="bi bi-bell-fill me-2"></i> Your Requests & Sessions</h5>
-                                        <p class="card-text mb-1">Pending Requests Received: <strong class="badge bg-warning text-dark rounded-pill">{{ mentorship_summary.received_pending_requests_count }}</strong></p>
-                                        <p class="card-text mb-1">Upcoming Sessions: <strong class="badge bg-primary rounded-pill">{{ mentorship_summary.upcoming_sessions_count }}</strong></p>
-                                        <p class="card-text mb-1">Completed Sessions: <strong class="badge bg-secondary rounded-pill">{{ mentorship_summary.completed_sessions_count }}</strong></p>
-                                        <div class="mt-3">
-                                            <a href="{% url 'mentorship:manage_requests' %}" class="btn btn-sm btn-outline-info rounded-pill me-2">Manage Requests</a>
-                                            <a href="{% url 'scheduling_sessions:my_proposals' %}" class="btn btn-sm btn-outline-info rounded-pill">Manage Proposals</a>
-                                        </div>
+                                        <h5 class="card-title text-warning mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i> Mentorship Status</h5>
+                                        <p class="card-text text-muted">Your mentorship role is not defined or profile is incomplete.</p>
+                                        <p class="card-text text-muted">Please update your profile to get started.</p>
+                                        {# You might add a link to profile update here if you have one #}
+                                        {# <a href="{% url 'accounts:update_profile' %}" class="btn btn-sm btn-outline-warning rounded-pill">Update Profile</a> #}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Chat Summary Card #}
+                        <div class="col-md-6">
+                            <div class="card bg-white h-100 shadow-sm border-start border-info border-4 rounded-3 text-start">
+                                <div class="card-body">
+                                    <h5 class="card-title text-info mb-3"><i class="bi bi-chat-dots-fill me-2"></i> Message Overview</h5>
+                                    <p class="card-text mb-1">Total Conversations: <strong class="badge bg-primary rounded-pill">{{ chat_summary.chat_rooms_count }}</strong></p>
+                                    <p class="card-text mb-1">Unread Messages:
+                                        <strong class="badge {% if chat_summary.total_unread_messages > 0 %}bg-danger{% else %}bg-success{% endif %} rounded-pill">
+                                            {{ chat_summary.total_unread_messages }}
+                                        </strong>
+                                    </p>
+                                    <div class="mt-3">
+                                        <a href="{% url 'chat:chat_room_list' %}" class="btn btn-sm btn-outline-info rounded-pill">Go to Messages</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    {% else %}
-                        <div class="alert alert-warning text-center py-4 rounded-3 shadow-sm" role="alert">
-                            <h4 class="alert-heading">No Mentorship Summary Available</h4>
-                            <p>It looks like your profile role is not set as a Mentor or Mentee, or your profile is incomplete.</p>
-                            <hr>
-                            <p class="mb-0">Please ensure your profile is complete and your role is correctly assigned to view your mentorship summary.</p>
-                            {# You might add a link to profile update here if you have one #}
-                            {# <a href="{% url 'accounts:update_profile' %}" class="btn btn-outline-warning mt-3">Update Profile</a> #}
+
+                        {# Progress Summary Card #}
+                        <div class="col-md-6">
+                            <div class="card bg-white h-100 shadow-sm border-start border-secondary border-4 rounded-3 text-start">
+                                <div class="card-body">
+                                    <h5 class="card-title text-secondary mb-3"><i class="bi bi-graph-up-arrow me-2"></i> Progress Overview</h5>
+                                    {% if user_role == 'mentee' %}
+                                        <p class="card-text mb-1">My Total Goals: <strong class="badge bg-primary rounded-pill">{{ progress_summary.total_goals }}</strong></p>
+                                        <p class="card-text mb-1">My Completed Goals: <strong class="badge bg-success rounded-pill">{{ progress_summary.completed_goals }}</strong></p>
+                                        <p class="card-text mb-1">My Goals In Progress: <strong class="badge bg-warning text-dark rounded-pill">{{ progress_summary.goals_in_progress }}</strong></p>
+                                        <div class="mt-3">
+                                            <a href="{% url 'progress:my_goals' %}" class="btn btn-sm btn-outline-secondary rounded-pill">View My Goals</a>
+                                        </div>
+                                    {% elif user_role == 'mentor' %}
+                                        <p class="card-text mb-1">Total Mentees' Goals: <strong class="badge bg-primary rounded-pill">{{ progress_summary.mentees_total_goals }}</strong></p>
+                                        <p class="card-text mb-1">Mentees' Completed Goals: <strong class="badge bg-success rounded-pill">{{ progress_summary.mentees_completed_goals }}</strong></p>
+                                        <p class="card-text mb-1">Mentees' Goals In Progress: <strong class="badge bg-warning text-dark rounded-pill">{{ progress_summary.mentees_goals_in_progress }}</strong></p>
+                                        <div class="mt-3">
+                                            <a href="{% url 'progress:mentee_progress_overview' %}" class="btn btn-sm btn-outline-secondary rounded-pill">View Mentees' Progress</a>
+                                        </div>
+                                    {% else %}
+                                        <p class="card-text text-muted">Progress tracking is available for Mentors and Mentees.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
-                    {% endif %}
+
+                        {# Session & Request Status Card #}
+                        <div class="col-md-6">
+                            {% if mentorship_summary.is_mentee or mentorship_summary.is_mentor %}
+                                <div class="card bg-white h-100 shadow-sm border-start border-info border-4 rounded-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-info mb-3"><i class="bi bi-calendar-check me-2"></i> Session & Request Status</h5>
+                                        {% if mentorship_summary.is_mentee %}
+                                            <p class="card-text mb-1">Pending Requests: <strong class="badge bg-warning text-dark rounded-pill">{{ mentorship_summary.pending_requests_count }}</strong></p>
+                                            <p class="card-text mb-1">Accepted Requests: <strong class="badge bg-success rounded-pill">{{ mentorship_summary.accepted_requests_count }}</strong></p>
+                                        {% elif mentorship_summary.is_mentor %}
+                                            <p class="card-text mb-1">Pending Requests Received: <strong class="badge bg-warning text-dark rounded-pill">{{ mentorship_summary.received_pending_requests_count }}</strong></p>
+                                        {% endif %}
+                                        <p class="card-text mb-1">Upcoming Sessions: <strong class="badge bg-primary rounded-pill">{{ mentorship_summary.upcoming_sessions_count }}</strong></p>
+                                        <p class="card-text mb-1">Completed Sessions: <strong class="badge bg-secondary rounded-pill">{{ mentorship_summary.completed_sessions_count }}</strong></p>
+                                        <div class="mt-3">
+                                            {% if mentorship_summary.is_mentee %}
+                                                <a href="{% url 'scheduling_sessions:my_proposals' %}" class="btn btn-sm btn-outline-info rounded-pill me-2">Manage Proposals</a>
+                                                <a href="{% url 'scheduling_sessions:my_bookings' %}" class="btn btn-sm btn-outline-info rounded-pill">View Bookings</a>
+                                            {% elif mentorship_summary.is_mentor %}
+                                                <a href="{% url 'mentorship:manage_requests' %}" class="btn btn-sm btn-outline-info rounded-pill me-2">Manage Requests</a>
+                                                <a href="{% url 'scheduling_sessions:my_proposals' %}" class="btn btn-sm btn-outline-info rounded-pill">Manage Proposals</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div> {# End of consolidated summary row #}
 
                     <hr class="my-4 border-primary">
 
